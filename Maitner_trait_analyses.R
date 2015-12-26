@@ -4,6 +4,31 @@ bien_traits<-read.csv("bien_traits_12192015")
 all_fp_trees<-read.csv("data_12192015/all_fp_trees.csv")
 all_trees<-read.csv("data_12192015/all_trees.csv")
 photosyn<-read.csv("data_12192015/photosyn.csv")
+#convert photosyn to match BIEN format
+#We can focus on the main  functional traits - leaf N, P, C and leaf SLA or LMA. 
+#Remember LMA is just the inverse of SLA. Also, leaf photosynthesis per unit area and per unit mass. 
+#We can also look at wood density but that  Is another dataset that needs to be found.
+
+Leaf_Nmass<-photosyn$n_percent*photosyn$laminapetiole_drymass
+Leaf_Pmass<-photosyn$p_corrected_percent*photosyn$laminapetiole_drymass
+Leaf_Cmass<-photosyn$c_percent*photosyn$laminapetiole_drymass
+Specific_leaf_area_SLA<-photosyn$sla_lamina_petiole
+photosyn<-cbind(photosyn,Leaf_Nmass,Leaf_Pmass,Leaf_Cmass,Specific_leaf_area_SLA)
+rm(Leaf_Cmass,Leaf_Pmass,Leaf_Nmass,Specific_leaf_area_SLA)
+
+#there are duplicate measurements for many leaf values, so duplicate values and unwanted columns will be removed
+
+photosyn2<-as.data.frame(cbind(photosyn$leaf_id,photosyn$fp_species_name,photosyn$fp_genus_name,photosyn$fp_family_name,photosyn$plot_code,photosyn$Leaf_Nmass,photosyn$Leaf_Pmass,photosyn$Leaf_Cmass,photosyn$Specific_leaf_area_SLA,deparse.level = 2))
+names(photosyn2)<-c("leaf_id","fp_species_name","fp_genus_name","fp_family_name","plot_code","Leaf_Nmass","Leaf_Pmass","Leaf_Cmass","Specific_leaf_area_SLA")
+photosyn3<-unique(photosyn2)
+photosyn<-photosyn3
+rm(photosyn2,photosyn3)
+
+
+#BIEN leaf nmass = peru n_percent*laminapetiole_drymass
+#BIEN leaf cmass = peru c_percent*laminapetiole_drymass
+#BIEN leaf pmass = peru p_corrected_percent*laminapetiole_drymass
+#BIEN Specific leaf area (SLA) = peru sla_lamina_petiole
 
 #Required data
 
@@ -30,8 +55,14 @@ traits_i[[6]]<-as.matrix(f_study_data_family_i<-photosyn[which(photosyn$fp_famil
 #i_bien_data_family_i<-  
 
 traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
-traits_i_2<-traits_i[[1]]
+traits_i<-traits_i[[1]]#pulls out the highest ranking level of traits
+traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
 
+#We can focus on the main  functional traits - leaf N, P, C and leaf SLA or LMA. 
+#Remember LMA is just the inverse of SLA. Also, leaf photosynthesis per unit area and per unit mass. 
+#We can also look at wood density but that  Is another dataset that needs to be found.
+
+print(length(traits_i[1,]))
 
 }#for loop fitting distributions
 
