@@ -1,6 +1,11 @@
 #require(private.BRI)
 require(MASS)
 
+#check conversions from photosyn table to bien format, might be off
+#need to find a new distribution
+
+
+
 #############################
 #Due to data format differences in bien and peru, I'm going to try and do this one trait at a time instead:
 bien_traits<-read.csv("bien_traits_12192015")
@@ -361,7 +366,46 @@ occurrences<-c(occurrences,occurrences_i)
 }
 
 sp_by_plot<-cbind(sp_by_plot,occurrences)
+rm(occurrences,i,occurrences_i,plot_i,sp_i)
 
 #####################################################
 
-#Now, we just need to draw 
+#Now, we just need to draw values according to the trait distributions
+plots<-unique(all_fp_trees$plot_code)
+CMass<-list()
+
+for(i in 1:length(plots)){
+plot_i<-as.character(plots[i])
+occurrences_i<-sp_by_plot[sp_by_plot[,1]==plot_i,]
+trait_draws<-NULL
+for(s in 1:length(occurrences_i[,1])){
+sp_s<-occurrences_i[,2][s]
+occ_s<-as.numeric(occurrences_i[,4][s])    
+vals<-output_Leaf_Cmass[which(output_Leaf_Cmass[,1]==plot_i & output_Leaf_Cmass[,2]==sp_s),]
+mean_s<-as.numeric(vals[3])
+sd_s<-as.numeric(vals[4])
+
+if(is.na(sd_s)==FALSE){
+trait_vals_s<-rnorm(n=occ_s,mean=mean_s,sd = sd_s)
+trait_draws<-c(trait_draws,trait_vals_s)
+
+}
+
+if(is.na(sd_s)==TRUE){
+
+
+trait_vals_s<-matrix(mean_s,occ_s) 
+trait_draws<-c(trait_draws,trait_vals_s)
+
+}
+
+
+
+}#trait draw for plot i
+CMass[[i]]<-trait_draws
+  
+#add code here to add trait draws to list  
+}#cmass trait draw
+
+
+min(na.omit(CMass[[1]])
