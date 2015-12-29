@@ -350,3 +350,18 @@ rm(traits_i,sp_i,genus_i,family_i,i,dist_i,mean_i,sd_i,plot_i,plots)
 ######################################################
 
 #Now, we need a list of species per plot with the occurrences numbers
+
+occurrences<-NULL
+for(i in 1:length(sp_by_plot[,1])){
+sp_i<-sp_by_plot[,2][i]  
+plot_i<-sp_by_plot[,1][i]
+occurrences_i<-length(which(all_fp_trees$plot_code==plot_i & all_fp_trees$fp_species_name==sp_i))
+occurrences<-c(occurrences,occurrences_i)
+  
+}
+
+sp_by_plot<-cbind(sp_by_plot,occurrences)
+
+#####################################################
+
+#Now, we just need to draw 
