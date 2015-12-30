@@ -1,9 +1,9 @@
 #require(private.BRI)
-require(MASS)
+require(MASS)#Needed for distribution fitting
 
-#check conversions from photosyn table to bien format, might be off
-#need to find a new distribution
-
+#need to find a new distribution-or use "while" to re-draw from normal dist. until all values are positive
+#sla dist needs to be 0 to pos. infin
+#cnp are percent, so use dist bounded by 0 and 1
 
 
 #############################
@@ -17,9 +17,9 @@ photosyn<-read.csv("data_12192015/photosyn.csv",colClasses = "character")
 #Remember LMA is just the inverse of SLA. Also, leaf photosynthesis per unit area and per unit mass. 
 #We can also look at wood density but that  Is another dataset that needs to be found.
 
-Leaf_Nmass<-as.numeric(photosyn$n_percent)*as.numeric(photosyn$laminapetiole_drymass)
-Leaf_Pmass<-as.numeric(photosyn$p_corrected_percent)*as.numeric(photosyn$laminapetiole_drymass)
-Leaf_Cmass<-as.numeric(photosyn$c_percent)*as.numeric(photosyn$laminapetiole_drymass)
+Leaf_Nmass<-as.numeric(photosyn$n_percent)#npc values will be in percent, BIEN data converted to match
+Leaf_Pmass<-as.numeric(photosyn$p_corrected_percent)
+Leaf_Cmass<-as.numeric(photosyn$c_percent)
 Specific_leaf_area_SLA<-as.numeric(photosyn$sla_lamina_petiole)
 photosyn<-cbind(photosyn,Leaf_Nmass,Leaf_Pmass,Leaf_Cmass,Specific_leaf_area_SLA)
 rm(Leaf_Cmass,Leaf_Pmass,Leaf_Nmass,Specific_leaf_area_SLA)
@@ -44,11 +44,26 @@ rm(photosyn2,photosyn3)
 #remove indets from trees data
 all_fp_trees<-all_fp_trees[which(all_fp_trees$fp_species_name!="Indet indet"),]
 
+#standardize BIEN cnp measurements to percent
+bien_traits$trait_value<-as.numeric(as.character(bien_traits$trait_value))
+for(i in 1:length(bien_traits[,1])){
+  
+  if(bien_traits$unit[i]=="mg/g"){
+    bien_traits$trait_value[i]<-bien_traits$trait_value[i]*0.1  
+    bien_traits$unit[i]<-"%"
+  }#if    
+  
+  
+}
+
 
 
 #1) Plot information
 plots<-unique(all_fp_trees$plot_code)
 sp_by_plot<-unique(cbind(as.character(all_fp_trees$plot_code),as.character(all_fp_trees$fp_species_name),as.character(all_fp_trees$fp_family_name)))
+##################################################
+
+##NMass distribution fitting
 output_Leaf_Nmass<-NULL
 for( i in 1:length(sp_by_plot[,1])){
   sp_i<-sp_by_plot[,2][i]  
