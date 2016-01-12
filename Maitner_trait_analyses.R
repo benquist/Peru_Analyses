@@ -1,9 +1,9 @@
 #require(private.BRI)
 require(MASS)#Needed for distribution fitting
-
+require(fitdistrplus)
 #need to find a new distribution-or use "while" to re-draw from normal dist. until all values are positive
 #sla dist needs to be 0 to pos. infin
-#cnp are percent, so use dist bounded by 0 and 1
+#cnp are percent, so use dist bounded by 0 and 1: beta seems likely
 
 
 #############################
@@ -113,33 +113,55 @@ for( i in 1:length(sp_by_plot[,1])){
       
   traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
   
-  if(length(traits_i)!=0){
+  if(length(traits_i)>1){
   traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
+  }
+  
+  if(length(traits_i)>1){
   #traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
-  print(length(traits_i[,1]))
-  dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
-  mean_i<-dist_i$estimate[1]
-  sd_i<-dist_i$estimate[2]
-  output_Leaf_Nmass<-rbind(output_Leaf_Nmass,cbind(plot_i,sp_i,mean_i,sd_i))
+  print(length(traits_i))
+  #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
+  #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
+  dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mme"))
+  shape1_i<-dist_i$estimate[1]
+  shape2_i<-dist_i$estimate[2]
+  #mean_i<-dist_i$estimate[1]
+  #sd_i<-dist_i$estimate[2]
+  output_Leaf_Nmass<-rbind(output_Leaf_Nmass,cbind(plot_i,sp_i,shape1_i,shape2_i))
   
   #calculate
   
-  }else{
-  #traits_i<-NA  
-  #do something here if trait is NA?
-  }
-
+  }else{#if>1
+  
+  if(length(traits_i)==1){
+    traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
+    #traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
+    print(length(traits_i[,1]))
+    #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
+    #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
+    #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mle"))
+    shape1_i<-as.numeric(traits_i[1])*.01
+    shape2_i<-NA
+    #mean_i<-dist_i$estimate[1]
+    #sd_i<-dist_i$estimate[2]
+    output_Leaf_Nmass<-rbind(output_Leaf_Nmass,cbind(plot_i,sp_i,shape1_i,shape2_i))
+    
+    #calculate
+    
+  }#if=1
+}#else
   
   
 }#for loop for fitting distributions
 
 rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
    g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
-rm(traits_i,sp_i,genus_i,family_i,i,dist_i,mean_i,sd_i,plot_i,plots)
+rm(traits_i,sp_i,genus_i,family_i,i,dist_i,plots,shape1_i,shape2_i)
 
 ############################################
 
 #Next,CMass
+
 output_Leaf_Cmass<-NULL
 for( i in 1:length(sp_by_plot[,1])){
   sp_i<-sp_by_plot[,2][i]  
@@ -189,32 +211,52 @@ for( i in 1:length(sp_by_plot[,1])){
   
   traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
   
-  if(length(traits_i)!=0){
+  if(length(traits_i)>1){
     traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
+  }
+  
+  if(length(traits_i)>1){
     #traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
-    print(length(traits_i[,1]))
-    dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
-    mean_i<-dist_i$estimate[1]
-    sd_i<-dist_i$estimate[2]
-    output_Leaf_Cmass<-rbind(output_Leaf_Cmass,cbind(plot_i,sp_i,mean_i,sd_i))
+    print(length(traits_i))
+    #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
+    #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
+    dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mme"))
+    shape1_i<-dist_i$estimate[1]
+    shape2_i<-dist_i$estimate[2]
+    #mean_i<-dist_i$estimate[1]
+    #sd_i<-dist_i$estimate[2]
+    output_Leaf_Cmass<-rbind(output_Leaf_Cmass,cbind(plot_i,sp_i,shape1_i,shape2_i))
     
     #calculate
     
-  }else{
-    #traits_i<-NA  
-    #do something here if trait is NA?
-  }
-  
+  }else{#if>1
+    
+    if(length(traits_i)==1){
+      traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
+      #traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
+      print(length(traits_i[,1]))
+      #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
+      #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
+      #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mle"))
+      shape1_i<-as.numeric(traits_i[1])*.01
+      shape2_i<-NA
+      #mean_i<-dist_i$estimate[1]
+      #sd_i<-dist_i$estimate[2]
+      output_Leaf_Cmass<-rbind(output_Leaf_Cmass,cbind(plot_i,sp_i,shape1_i,shape2_i))
+      
+      #calculate
+      
+    }#if=1
+  }#else
   
   
 }#for loop for fitting distributions
 
 rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
    g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
-rm(traits_i,sp_i,genus_i,family_i,i,dist_i,mean_i,sd_i,plot_i,plots)
-
-#######################################
-#P Mass
+rm(traits_i,sp_i,genus_i,family_i,i,dist_i,mean_i,sd_i,plot_i,plots,shape1_i,shape2_i)
+##############################################
+#PMass
 
 output_Leaf_Pmass<-NULL
 for( i in 1:length(sp_by_plot[,1])){
@@ -265,29 +307,50 @@ for( i in 1:length(sp_by_plot[,1])){
   
   traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
   
-  if(length(traits_i)!=0){
+  if(length(traits_i)>1){
     traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
+  }
+  
+  if(length(traits_i)>1){
     #traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
-    print(length(traits_i[,1]))
-    dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
-    mean_i<-dist_i$estimate[1]
-    sd_i<-dist_i$estimate[2]
-    output_Leaf_Pmass<-rbind(output_Leaf_Pmass,cbind(plot_i,sp_i,mean_i,sd_i))
+    print(length(traits_i))
+    #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
+    #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
+    dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mme"))
+    shape1_i<-dist_i$estimate[1]
+    shape2_i<-dist_i$estimate[2]
+    #mean_i<-dist_i$estimate[1]
+    #sd_i<-dist_i$estimate[2]
+    output_Leaf_Cmass<-rbind(output_Leaf_Cmass,cbind(plot_i,sp_i,shape1_i,shape2_i))
     
     #calculate
     
-  }else{
-    #traits_i<-NA  
-    #do something here if trait is NA?
-  }
-  
+  }else{#if>1
+    
+    if(length(traits_i)==1){
+      traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
+      #traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
+      print(length(traits_i[,1]))
+      #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
+      #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
+      #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mle"))
+      shape1_i<-as.numeric(traits_i[1])*.01
+      shape2_i<-NA
+      #mean_i<-dist_i$estimate[1]
+      #sd_i<-dist_i$estimate[2]
+      output_Leaf_Cmass<-rbind(output_Leaf_Cmass,cbind(plot_i,sp_i,shape1_i,shape2_i))
+      
+      #calculate
+      
+    }#if=1
+  }#else
   
   
 }#for loop for fitting distributions
 
 rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
    g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
-rm(traits_i,sp_i,genus_i,family_i,i,dist_i,mean_i,sd_i,plot_i,plots)
+rm(traits_i,sp_i,genus_i,family_i,i,dist_i,plot_i,shape1_i,shape2_i)
 
 #############################################
 #photosyn$`Specific leaf area (SLA)`
