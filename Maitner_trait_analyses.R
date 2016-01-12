@@ -254,7 +254,7 @@ for( i in 1:length(sp_by_plot[,1])){
 
 rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
    g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
-rm(traits_i,sp_i,genus_i,family_i,i,dist_i,mean_i,sd_i,plot_i,plots,shape1_i,shape2_i)
+rm(traits_i,sp_i,genus_i,family_i,i,dist_i,plot_i,shape1_i,shape2_i)
 ##############################################
 #PMass
 
@@ -321,7 +321,7 @@ for( i in 1:length(sp_by_plot[,1])){
     shape2_i<-dist_i$estimate[2]
     #mean_i<-dist_i$estimate[1]
     #sd_i<-dist_i$estimate[2]
-    output_Leaf_Cmass<-rbind(output_Leaf_Cmass,cbind(plot_i,sp_i,shape1_i,shape2_i))
+    output_Leaf_Pmass<-rbind(output_Leaf_Pmass,cbind(plot_i,sp_i,shape1_i,shape2_i))
     
     #calculate
     
@@ -338,7 +338,7 @@ for( i in 1:length(sp_by_plot[,1])){
       shape2_i<-NA
       #mean_i<-dist_i$estimate[1]
       #sd_i<-dist_i$estimate[2]
-      output_Leaf_Cmass<-rbind(output_Leaf_Cmass,cbind(plot_i,sp_i,shape1_i,shape2_i))
+      output_Leaf_Pmass<-rbind(output_Leaf_Pmass,cbind(plot_i,sp_i,shape1_i,shape2_i))
       
       #calculate
       
