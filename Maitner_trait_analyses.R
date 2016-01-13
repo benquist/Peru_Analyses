@@ -17,9 +17,9 @@ photosyn<-read.csv("data_12192015/photosyn.csv",colClasses = "character")
 #Remember LMA is just the inverse of SLA. Also, leaf photosynthesis per unit area and per unit mass. 
 #We can also look at wood density but that  Is another dataset that needs to be found.
 
-Leaf_Nmass<-as.numeric(photosyn$n_percent)#npc values will be in percent, BIEN data converted to match
-Leaf_Pmass<-as.numeric(photosyn$p_corrected_percent)
-Leaf_Cmass<-as.numeric(photosyn$c_percent)
+Leaf_Nmass<-(as.numeric(photosyn$n_percent))*.01#npc values will be in percent, BIEN data converted to match
+Leaf_Pmass<-(as.numeric(photosyn$p_corrected_percent))*.01
+Leaf_Cmass<-(as.numeric(photosyn$c_percent))*.01
 Specific_leaf_area_SLA<-as.numeric(photosyn$sla_lamina_petiole)
 photosyn<-cbind(photosyn,Leaf_Nmass,Leaf_Pmass,Leaf_Cmass,Specific_leaf_area_SLA)
 rm(Leaf_Cmass,Leaf_Pmass,Leaf_Nmass,Specific_leaf_area_SLA)
@@ -39,24 +39,30 @@ photosyn3<-unique(photosyn2)
 photosyn<-photosyn3
 rm(photosyn2,photosyn3)
 
-#First up, Leaf N
 
 #remove indets from trees data
 all_fp_trees<-all_fp_trees[which(all_fp_trees$fp_species_name!="Indet indet"),]
+###
 
 #standardize BIEN cnp measurements to percent
+
 bien_traits$trait_value<-as.numeric(as.character(bien_traits$trait_value))
 for(i in 1:length(bien_traits[,1])){
+  #print(i)
+  if(is.na(bien_traits$trait_name[i])==FALSE){
+  if(bien_traits$trait_name[i]=='Leaf Pmass'|bien_traits$trait_name[i]=='Leaf Nmass'){
   
+    if(bien_traits$unit[i]=="%"){
+      bien_traits$trait_value[i]<-bien_traits$trait_value[i]*0.01  
+      }#if  %  
+    
   if(bien_traits$unit[i]=="mg/g"){
-    bien_traits$trait_value[i]<-bien_traits$trait_value[i]*0.1  
+    bien_traits$trait_value[i]<-bien_traits$trait_value[i]*0.001  
     bien_traits$unit[i]<-"%"
-  }#if    
-  
-  
-}
-
-
+  }#if  mg/g  
+  }#if n or p mass
+  }#name is not NA
+}#bien standardizing loop
 
 #1) Plot information
 plots<-unique(all_fp_trees$plot_code)
@@ -460,19 +466,20 @@ for(s in 1:length(occurrences_i[,1])){
 sp_s<-occurrences_i[,2][s]
 occ_s<-as.numeric(occurrences_i[,4][s])    
 vals<-output_Leaf_Cmass[which(output_Leaf_Cmass[,1]==plot_i & output_Leaf_Cmass[,2]==sp_s),]
-mean_s<-as.numeric(vals[3])
-sd_s<-as.numeric(vals[4])
+shape1_s<-as.numeric(vals[3])
+shape2_s<-as.numeric(vals[4])
 
-if(is.na(sd_s)==FALSE){
-trait_vals_s<-rnorm(n=occ_s,mean=mean_s,sd = sd_s)
+if(is.na(shape2_s)==FALSE){
+#trait_vals_s<-rnorm(n=occ_s,mean=mean_s,sd = sd_s)
+trait_vals_s<-rbeta(n=occ_s,shape1=shape1_s,shape2 = shape2_s)
 trait_draws<-c(trait_draws,trait_vals_s)
 
 }
 
-if(is.na(sd_s)==TRUE){
+if(is.na(shape2_s)==TRUE){
 
 
-trait_vals_s<-matrix(mean_s,occ_s) 
+trait_vals_s<-matrix(shape1_s,occ_s) 
 trait_draws<-c(trait_draws,trait_vals_s)
 
 }
@@ -486,4 +493,4 @@ CMass[[i]]<-trait_draws
 }#cmass trait draw
 
 
-min(na.omit(CMass[[1]])
+hist(CMass[[3]])
