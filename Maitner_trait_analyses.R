@@ -17,9 +17,9 @@ photosyn<-read.csv("data_12192015/photosyn.csv",colClasses = "character")
 #Remember LMA is just the inverse of SLA. Also, leaf photosynthesis per unit area and per unit mass. 
 #We can also look at wood density but that  Is another dataset that needs to be found.
 
-Leaf_Nmass<-(as.numeric(photosyn$n_percent))*.01#npc values will be in percent, BIEN data converted to match
-Leaf_Pmass<-(as.numeric(photosyn$p_corrected_percent))*.01
-Leaf_Cmass<-(as.numeric(photosyn$c_percent))*.01
+Leaf_Nmass<-(as.numeric(photosyn$n_percent))#npc values will be in percent, BIEN data converted to match
+Leaf_Pmass<-(as.numeric(photosyn$p_corrected_percent))
+Leaf_Cmass<-(as.numeric(photosyn$c_percent))
 Specific_leaf_area_SLA<-as.numeric(photosyn$sla_lamina_petiole)
 photosyn<-cbind(photosyn,Leaf_Nmass,Leaf_Pmass,Leaf_Cmass,Specific_leaf_area_SLA)
 rm(Leaf_Cmass,Leaf_Pmass,Leaf_Nmass,Specific_leaf_area_SLA)
@@ -128,7 +128,7 @@ for( i in 1:length(sp_by_plot[,1])){
   print(length(traits_i))
   #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
   #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
-  dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mme"))
+  dist_i<-fitdist(data=(as.numeric(as.vector(traits_i))),distr = "beta", method = ("mme"))
   shape1_i<-dist_i$estimate[1]
   shape2_i<-dist_i$estimate[2]
   #mean_i<-dist_i$estimate[1]
@@ -145,8 +145,8 @@ for( i in 1:length(sp_by_plot[,1])){
     print(length(traits_i[,1]))
     #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
     #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
-    #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mle"))
-    shape1_i<-as.numeric(traits_i[1])*.01
+    #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i))),distr = "beta", method = ("mle"))
+    shape1_i<-as.numeric(traits_i[1])
     shape2_i<-NA
     #mean_i<-dist_i$estimate[1]
     #sd_i<-dist_i$estimate[2]
@@ -226,7 +226,7 @@ for( i in 1:length(sp_by_plot[,1])){
     print(length(traits_i))
     #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
     #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
-    dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mme"))
+    dist_i<-fitdist(data=(as.numeric(as.vector(traits_i))),distr = "beta", method = ("mme"))
     shape1_i<-dist_i$estimate[1]
     shape2_i<-dist_i$estimate[2]
     #mean_i<-dist_i$estimate[1]
@@ -243,8 +243,8 @@ for( i in 1:length(sp_by_plot[,1])){
       print(length(traits_i[,1]))
       #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
       #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
-      #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mle"))
-      shape1_i<-as.numeric(traits_i[1])*.01
+      #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i))),distr = "beta", method = ("mle"))
+      shape1_i<-as.numeric(traits_i[1])
       shape2_i<-NA
       #mean_i<-dist_i$estimate[1]
       #sd_i<-dist_i$estimate[2]
@@ -322,7 +322,7 @@ for( i in 1:length(sp_by_plot[,1])){
     print(length(traits_i))
     #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
     #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
-    dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mme"))
+    dist_i<-fitdist(data=(as.numeric(as.vector(traits_i))),distr = "beta", method = ("mme"))
     shape1_i<-dist_i$estimate[1]
     shape2_i<-dist_i$estimate[2]
     #mean_i<-dist_i$estimate[1]
@@ -339,8 +339,8 @@ for( i in 1:length(sp_by_plot[,1])){
       print(length(traits_i[,1]))
       #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
       #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
-      #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i)))*.01,distr = "beta", method = ("mle"))
-      shape1_i<-as.numeric(traits_i[1])*.01
+      #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i))),distr = "beta", method = ("mle"))
+      shape1_i<-as.numeric(traits_i[1])
       shape2_i<-NA
       #mean_i<-dist_i$estimate[1]
       #sd_i<-dist_i$estimate[2]
@@ -492,5 +492,97 @@ CMass[[i]]<-trait_draws
 #add code here to add trait draws to list  
 }#cmass trait draw
 
+rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
 
-hist(CMass[[3]])
+#hist(CMass[[3]])
+
+#########################################
+
+#N Mass
+#Now, we just need to draw values according to the trait distributions
+Nmass<-list()
+
+for(i in 1:length(plots)){
+  plot_i<-as.character(plots[i])
+  occurrences_i<-sp_by_plot[sp_by_plot[,1]==plot_i,]
+  trait_draws<-NULL
+  for(s in 1:length(occurrences_i[,1])){
+    sp_s<-occurrences_i[,2][s]
+    occ_s<-as.numeric(occurrences_i[,4][s])    
+    vals<-output_Leaf_Nmass[which(output_Leaf_Nmass[,1]==plot_i & output_Leaf_Nmass[,2]==sp_s),]
+    shape1_s<-as.numeric(vals[3])
+    shape2_s<-as.numeric(vals[4])
+    
+    if(is.na(shape2_s)==FALSE){
+      #trait_vals_s<-rnorm(n=occ_s,mean=mean_s,sd = sd_s)
+      trait_vals_s<-rbeta(n=occ_s,shape1=shape1_s,shape2 = shape2_s)
+      trait_draws<-c(trait_draws,trait_vals_s)
+      
+    }
+    
+    if(is.na(shape2_s)==TRUE){
+      
+      
+      trait_vals_s<-matrix(shape1_s,occ_s) 
+      trait_draws<-c(trait_draws,trait_vals_s)
+      
+    }
+    
+    
+    
+  }#trait draw for plot i
+  Nmass[[i]]<-trait_draws
+  
+  #add code here to add trait draws to list  
+}#Nmass trait draw
+
+rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
+
+#hist(Nmass[[3]])
+
+
+#################################
+
+
+#P Mass
+#Now, we just need to draw values according to the trait distributions
+Pmass<-list()
+
+for(i in 1:length(plots)){
+  plot_i<-as.character(plots[i])
+  occurrences_i<-sp_by_plot[sp_by_plot[,1]==plot_i,]
+  trait_draws<-NULL
+  for(s in 1:length(occurrences_i[,1])){
+    sp_s<-occurrences_i[,2][s]
+    occ_s<-as.numeric(occurrences_i[,4][s])    
+    vals<-output_Leaf_Pmass[which(output_Leaf_Pmass[,1]==plot_i & output_Leaf_Pmass[,2]==sp_s),]
+    shape1_s<-as.numeric(vals[3])
+    shape2_s<-as.numeric(vals[4])
+    
+    if(is.na(shape2_s)==FALSE){
+      #trait_vals_s<-rnorm(n=occ_s,mean=mean_s,sd = sd_s)
+      trait_vals_s<-rbeta(n=occ_s,shape1=shape1_s,shape2 = shape2_s)
+      trait_draws<-c(trait_draws,trait_vals_s)
+      
+    }
+    
+    if(is.na(shape2_s)==TRUE){
+      
+      
+      trait_vals_s<-matrix(shape1_s,occ_s) 
+      trait_draws<-c(trait_draws,trait_vals_s)
+      
+    }
+    
+    
+    
+  }#trait draw for plot i
+  Pmass[[i]]<-trait_draws
+  
+  #add code here to add trait draws to list  
+}#Pmass trait draw
+
+rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
+
+#hist(Pmass[[5]])
+
