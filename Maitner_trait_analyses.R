@@ -586,3 +586,53 @@ rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
 
 #hist(Pmass[[5]])
 
+#######################################
+
+
+trait_list<-CMass
+plot(density(na.omit(trait_list[[1]])),col="red",ylim=c(0,25),main = "C Mass",xlab="Percent")  
+lines(density(na.omit(trait_list[[2]])),col="orange")  
+lines(density(na.omit(trait_list[[3]])),col="yellow")  
+lines(density(na.omit(trait_list[[4]])),col="light green")  
+lines.default(density(na.omit(trait_list[[5]])),col="dark green")  
+lines(density(na.omit(trait_list[[6]])),col="light blue")  
+lines(density(na.omit(trait_list[[7]])),col="dark blue")  
+lines(density(na.omit(trait_list[[8]])),col="violet")  
+lines(density(na.omit(trait_list[[9]])),col="purple")  
+lines(density(na.omit(trait_list[[10]])),col="black")  
+
+#red SPD-01 
+#orange TAM-06
+#yellow ACJ-01 
+#light green ESP-01 
+#dark green PAN-02 
+#light blue PAN-03 
+#dark blue SPD-02 
+#violet TRU-04 
+#purple WAY-01 
+#black TAM-05
+
+trait_list<-Nmass
+plot(density(na.omit(trait_list[[1]])),col="red",ylim=c(0,120),main = "N Mass",xlab="Percent")  
+lines(density(na.omit(trait_list[[2]])),col="orange")  
+lines(density(na.omit(trait_list[[3]])),col="yellow")  
+lines(density(na.omit(trait_list[[4]])),col="light green")  
+lines.default(density(na.omit(trait_list[[5]])),col="dark green")  
+lines(density(na.omit(trait_list[[6]])),col="light blue")  
+lines(density(na.omit(trait_list[[7]])),col="dark blue")  
+lines(density(na.omit(trait_list[[8]])),col="violet")  
+lines(density(na.omit(trait_list[[9]])),col="purple")  
+lines(density(na.omit(trait_list[[10]])),col="black")  
+
+trait_list<-Pmass
+plot(density(na.omit(trait_list[[1]])),col="red",ylim=c(0,1500),main = "P Mass",xlab = "Percent")  
+lines(density(na.omit(trait_list[[2]])),col="orange")  
+lines(density(na.omit(trait_list[[3]])),col="yellow")  
+lines(density(na.omit(trait_list[[4]])),col="light green")  
+lines.default(density(na.omit(trait_list[[5]])),col="dark green")  
+lines(density(na.omit(trait_list[[6]])),col="light blue")  
+lines(density(na.omit(trait_list[[7]])),col="dark blue")  
+lines(density(na.omit(trait_list[[8]])),col="violet")  
+lines(density(na.omit(trait_list[[9]])),col="purple")  
+lines(density(na.omit(trait_list[[10]])),col="black")  
+
