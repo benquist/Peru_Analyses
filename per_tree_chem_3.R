@@ -5,7 +5,6 @@
 ##
 ######################################
 
-
 library(gemtraits)
 
 con = connect_gemtraits_db()
