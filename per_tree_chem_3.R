@@ -62,12 +62,16 @@ per_plot_chem_2 = ddply(photosyn, .(plot_code), summarize,
                           mean_sla_lamina_petiole = mean(sla_lamina_petiole, na.rm = T),
                           var_sla_lamina_petiole = var(sla_lamina_petiole, na.rm = T),
                           min_sla_lamina_petiole = min(sla_lamina_petiole, na.rm = T),
-                          max_sla_lamina_petiole = max(sla_lamina_petiole, na.rm = T)
+                          max_sla_lamina_petiole = max(sla_lamina_petiole, na.rm = T),
+                          mean_photosynthesis = mean(photosynthesis, na.rm = T),
+                          var_photosynthesis = var(photosynthesis, na.rm = T),
+                          mean_air_temp = mean(air_temp, na.rm = T),
+                          var_air_temp = var(air_temp, na.rm = T)
+                        
 )
                           #dbh = dbh[1])
 
 write.csv(per_plot_chem_2, "per_plot_chem_2.csv")
-
 
 ### traits to add  
 ## photosynthesis c13_delta n15_delta lamina_area lamina_drymass lma_lamina lma_lamina_petiole  fp_species_name
