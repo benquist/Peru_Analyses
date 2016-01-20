@@ -44,13 +44,22 @@ names(Peru_Plot_Master.data)
 str(Peru_Plot_Master.data)
 
 
-###
+######### Calculated Variables ###############
 ##Calculate 1/kT
 
 Peru_Plot_Master.data$MAinvBT <- 1/(0.00008617*(Peru_Plot_Master.data$Mean.annual.air.temperature..degC.+273.15))
 
 ##Calculate the leaf carbon efficiency photosynthesis umol/m^2/s divided by RLeaf
-Peru_Plot_Master.data$PhotosynthesisPerRLeaf <- ((Peru_Plot_Master.data$mean_photosynthesis)/ + (Peru_Plot_Master.data$RLeaf))
+Peru_Plot_Master.data$PhotosynthesisPerLeafN <- ((Peru_Plot_Master.data$mean_photosynthesis)/(Peru_Plot_Master.data$mean_n_percent))
+
+        #* calculate leaf carbon efficiency per leaf first before calculating the 
+        # plot average?
+
+##Calculate site leaf nitrogen use efficiency
+Peru_Plot_Master.data$PhotosynthesisPerRLeaf <- ((Peru_Plot_Master.data$mean_photosynthesis)/(Peru_Plot_Master.data$RLeaf))
+
+##Calculate site N:P 
+Peru_Plot_Master.data$PlotNtoP <- ((Peru_Plot_Master.data$mean_n_percent)/ (Peru_Plot_Master.data$mean_p_percent))
 
 #################
 #####  Plots 
@@ -163,7 +172,7 @@ myplot_plottempphoto
   myplot_sitetempsla
   #*weak positive correlation
 
-### site temperature v SLA mean_sla_lamina
+###### site temperature v SLA mean_sla_lamina
   
 myplot_sitetempsla <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., mean_sla_lamina)) + geom_point(size = 3) 
   
@@ -176,7 +185,7 @@ myplot_sitetempsla
   
           #*weak positive correlation
   
-### site temperature v mean_n_percent
+###### site temperature v mean_n_percent
 
 myplot_sitetempN <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., mean_n_percent)) + geom_point(size = 3) 
 
@@ -190,7 +199,7 @@ myplot_sitetempN
       #*weak positive correlation
 
 
-### site temperature v mean_p_percent
+###### site temperature v mean_p_percent
 
 myplot_sitetempP <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., mean_p_percent)) + geom_point(size = 3) 
 
@@ -204,7 +213,7 @@ myplot_sitetempP
         #* no strong relationship. looks flat. What about respiration rates?
 
 
-### site temperature v RLeaf
+###### site temperature v RLeaf
 myplot_sitetempRLeaf <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., RLeaf)) + geom_point(size = 3) 
 
 #myplot_sitetempRLeaf  <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, RLeaf)) + geom_point(size = 3) 
@@ -214,10 +223,10 @@ theme_bw()
 # log-log plot without log tick marks
 myplot_sitetempRLeaf 
 
-#Leaf respiration increases with temperature. Looks like photosynthesis is modified by not leaf respiration.  If correct then the net carbon gain per leaf per carbon respiration changes with temperature. 
+    #Leaf respiration increases with temperature. Looks like photosynthesis is modified by not leaf respiration.  If correct then the net carbon gain per leaf per carbon respiration changes with temperature. 
 
 
-### site temperature v PhotosynthesisPerRLeaf
+###### site temperature v PhotosynthesisPerRLeaf
 myplot_sitetempRLeaf <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., PhotosynthesisPerRLeaf)) + geom_point(size = 3) 
 
 #myplot_sitetempRLeaf  <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, RLeaf)) + geom_point(size = 3) 
@@ -227,11 +236,50 @@ theme_bw()
 # log-log plot without log tick marks
 myplot_sitetempRLeaf 
 
-# cool - mean plot Photosynthesis per RLeaf decreases with increasing site temperature
+    # cool - mean plot Photosynthesis per RLeaf decreases with increasing site temperature. But why should this be?  Change in the nitrogen use efficiency?
+
+
+###### site temperature v PhotosynthesisPerLeafN
+myplot_sitetempLeafNEffic <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., PhotosynthesisPerLeafN)) + geom_point(size = 3) 
+
+#myplot_sitetempLeafNEffic  <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, PhotosynthesisPerLeafN)) + geom_point(size = 3) 
+
+theme_bw()
+
+# log-log plot without log tick marks
+myplot_sitetempLeafNEffic 
+
+    ## ** impressive negative correlation - warmer temps have lower mean plot photosynthesis per unit leaf nitrogen. 
+
+
+###### photosynthesis v PhotosynthesisPerLeafN
+myplot_sitetempLeafNEffic <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., PhotosynthesisPerLeafN)) + geom_point(size = 3) 
+
+#myplot_sitetempLeafNEffic  <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, PhotosynthesisPerLeafN)) + geom_point(size = 3) 
+
+theme_bw()
+
+# log-log plot without log tick marks
+myplot_sitetempLeafNEffic 
+
+    ## * cool - strong decrease in photosynthesis per leaf N with mean annual air temp. This indicates that colder sites have higher nitrogen use efficiency
+
+###### plot temperature v leafN:P
+
+myplot_sitetempNtoP <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., PlotNtoP)) + geom_point(size = 3) 
+
+#myplot_sitetempNtoP  <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, PhotosynthesisPerLeafN)) + geom_point(size = 3) 
+
+theme_bw()
+
+# log-log plot without log tick marks
+myplot_sitetempNtoP 
+    #* inrease in the site N:P ratio with temperature. Similar to the arguments of Kerkhoff et al. 2005
 
 
 
 
+######################################################## 
 ######################################################## 
 ## Traits and ecosystem
 #NPP v mean plot SLA
@@ -563,6 +611,40 @@ plot(fit3)
 
 #Variable Importance
 plot(fit3, type="s")
+
+#### Now fit many more leaf traits including mean plot photosynthesis
+fit4 <- glmulti(log10(GPP) ~ Solar.radiation..GJ.m.2.yr.1. + log10(Aboveground_biomass) + Precipitation..mm.yr.1. + log10(mean_sla_lamina_petiole) + var_sla_lamina_petiole + MAinvBT + mean_n_percent + log10(Vegetation.height..m.) + mean_photosynthesis + var_photosynthesis + PhotosynthesisPerLeafN + PlotNtoP, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
+summary(fit4)
+tmp <- weightable(fit4)
+tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
+tmp
+#  note log10(GPP) ~ 1 + var_sla_lamina_petiole comes out as #7
+
+#So, we could now examine the "best" model in closer detail with:
+summary(fit4@objects[[1]])
+plot(fit4)
+
+#Variable Importance
+plot(fit4, type="s")
+
+
+#### Predicting total biomass
+fit5 <- glmulti(log10(Aboveground_biomass) ~ Solar.radiation..GJ.m.2.yr.1. + Precipitation..mm.yr.1. + Elevation..m. + log10(mean_sla_lamina_petiole) + var_sla_lamina_petiole + MAinvBT + mean_n_percent + mean_photosynthesis + var_photosynthesis + PhotosynthesisPerLeafN + PlotNtoP, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
+summary(fit4)
+tmp <- weightable(fit4)
+tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
+tmp
+#  note log10(GPP) ~ 1 + var_sla_lamina_petiole comes out as #7
+
+#So, we could now examine the "best" model in closer detail with:
+summary(fit5@objects[[1]])
+plot(fit5)
+
+#Variable Importance
+plot(fit5, type="s")
+
+    #* interesting temperature and elevation comes out on top but the variable model average importance of terms is less than 0.8. Does this suggest that predicting total biomass is difficult? Importance of site history (land slides etc.)?- just the chance that there is a big tree in the sampled plot?
+
 
 #evaluate variable importance, etc.
 install.packages("MuMIn")
