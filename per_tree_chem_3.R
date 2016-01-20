@@ -69,6 +69,7 @@ per_plot_chem_2 = ddply(photosyn, .(plot_code), summarize,
 
 write.csv(per_plot_chem_2, "per_plot_chem_2.csv")
 
+
 ### traits to add  
 ## photosynthesis c13_delta n15_delta lamina_area lamina_drymass lma_lamina lma_lamina_petiole  fp_species_name
 
