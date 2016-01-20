@@ -49,25 +49,51 @@ str(Peru_Plot_Master.data)
 
 Peru_Plot_Master.data$MAinvBT <- 1/(0.00008617*(Peru_Plot_Master.data$Mean.annual.air.temperature..degC.+273.15))
 
+##Calculate the leaf carbon efficiency photosynthesis umol/m^2/s divided by RLeaf
+Peru_Plot_Master.data$PhotosynthesisPerRLeaf <- ((Peru_Plot_Master.data$mean_photosynthesis)/ + (Peru_Plot_Master.data$RLeaf))
+
 #################
 #####  Plots 
 ################
 
 #NPP v Biomass
-myplot_NPP <- ggplot(data=Peru_Plot_Master.data, aes(x = Aboveground_biomass, y = NPP))
-summary(myplot_NPP)
+# http://www.sthda.com/english/wiki/ggplot2-axis-scales-and-transformations#log-and-sqrt-transformations
 
-myplot_NPP_nice <- myplot_NPP + geom_point(size = 3)
-myplot_NPP_nice + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+library(scales) # to access break formatting functions, x and y axis are transformed and formatted
+myplot_NPP <- ggplot(Peru_Plot_Master.data, aes(Aboveground_biomass, NPP)) + geom_point(size = 3) +
+  scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  theme_bw()
 
+# log-log plot without log tick marks
+myplot_NPP
+
+# Show log tick marks
+myplot_NPP + annotation_logticks() 
+
+
+
+########
 #GPP v Biomass
-myplot_GPP <- ggplot(data=Peru_Plot_Master.data, aes(x = Aboveground_biomass, y = GPP))
-summary(myplot_GPP)
 
-myplot_GPP_nice <- myplot_GPP + geom_point(size = 3)
-myplot_GPP_nice + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+myplot_GPP <- ggplot(Peru_Plot_Master.data, aes(Aboveground_biomass, GPP)) + geom_point(size = 3) +
+  scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  theme_bw()
+
+# log-log plot without log tick marks
+myplot_GPP
+
+# Show log tick marks
+myplot_GPP + annotation_logticks() 
 
 
+
+########
 #ResidenceTime v Biomass
 
 myplot_Residence_time <- ggplot(data=Peru_Plot_Master.data, aes(x = Aboveground_biomass, y = Residence_time))
@@ -76,7 +102,7 @@ summary(myplot_Residence_time)
 myplot_Residence_time_nice <- myplot_Residence_time + geom_point(size = 3)
 myplot_Residence_time_nice + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
-
+########
 #NPP v Solar Radiation
 myplot_NPP <- ggplot(data=Peru_Plot_Master.data, aes(x = Solar.radiation..GJ.m.2.yr.1., y = GPP))
 summary(myplot_NPP)
@@ -84,13 +110,145 @@ summary(myplot_NPP)
 myplot_NPP_nice <- myplot_NPP + geom_point(size = 6)
 myplot_NPP_nice + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
-## Traits
+
+########
+#elevation v leaf temperature
+
+myplot_leaftemp <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., mean_air_temp)) + geom_point(size = 3) 
+
+  theme_bw()
+
+# log-log plot without log tick marks
+  myplot_leaftemp
+
+# Show log tick marks
+  myplot_leaftemp + annotation_logticks() 
+#** leaf temps decrease with increasing elevation BUT  . . .
+
+######## 
+### leaf temperature v photosynthesis
+  
+myplot_leaftempphoto <- ggplot(Peru_Plot_Master.data, aes(mean_air_temp, mean_photosynthesis)) + geom_point(size = 3) 
+  
+  theme_bw()
+  
+  # log-log plot without log tick marks
+  myplot_leaftempphoto
+  
+# No strong relationship between mean air temp of leaf chamber and mean photosyn . . in addtion . . .  
+  
+  ######## 
+  ### site temperature v photosynthesis
+  
+myplot_plottempphoto <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., mean_photosynthesis)) + geom_point(size = 3) 
+  
+myplot_plottempphoto <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, mean_photosynthesis)) + geom_point(size = 3) 
+  
+  
+theme_bw()
+  
+# log-log plot without log tick marks
+myplot_plottempphoto
+  
+# ** there is an interesting positive correlation with site temperature and the plot mean photosynthesis indicating that colder plots have similar if not higher levels of mean photosynthesis. Hypothesis - shift in traits help enable similar rates of metabolism (photosynthesis)
+  
+  ######## 
+  ### site temperature v SLA
+  
+  myplot_sitetempsla <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., mean_sla_lamina_petiole)) + geom_point(size = 3) 
+  
+  theme_bw()
+  
+  # log-log plot without log tick marks
+  myplot_sitetempsla
+  #*weak positive correlation
+
+### site temperature v SLA mean_sla_lamina
+  
+myplot_sitetempsla <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., mean_sla_lamina)) + geom_point(size = 3) 
+  
+#myplot_sitetempsla <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, mean_sla_lamina)) + geom_point(size = 3) 
+
+theme_bw()
+  
+# log-log plot without log tick marks
+myplot_sitetempsla
+  
+          #*weak positive correlation
+  
+### site temperature v mean_n_percent
+
+myplot_sitetempN <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., mean_n_percent)) + geom_point(size = 3) 
+
+# myplot_sitetempN  <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, mean_n_percent)) + geom_point(size = 3) 
+
+theme_bw()
+
+# log-log plot without log tick marks
+myplot_sitetempN
+
+      #*weak positive correlation
+
+
+### site temperature v mean_p_percent
+
+myplot_sitetempP <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., mean_p_percent)) + geom_point(size = 3) 
+
+myplot_sitetempP  <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, mean_p_percent)) + geom_point(size = 3) 
+
+theme_bw()
+
+# log-log plot without log tick marks
+myplot_sitetempP
+
+        #* no strong relationship. looks flat. What about respiration rates?
+
+
+### site temperature v RLeaf
+myplot_sitetempRLeaf <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., RLeaf)) + geom_point(size = 3) 
+
+#myplot_sitetempRLeaf  <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, RLeaf)) + geom_point(size = 3) 
+
+theme_bw()
+
+# log-log plot without log tick marks
+myplot_sitetempRLeaf 
+
+#Leaf respiration increases with temperature. Looks like photosynthesis is modified by not leaf respiration.  If correct then the net carbon gain per leaf per carbon respiration changes with temperature. 
+
+
+### site temperature v PhotosynthesisPerRLeaf
+myplot_sitetempRLeaf <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., PhotosynthesisPerRLeaf)) + geom_point(size = 3) 
+
+#myplot_sitetempRLeaf  <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, RLeaf)) + geom_point(size = 3) 
+
+theme_bw()
+
+# log-log plot without log tick marks
+myplot_sitetempRLeaf 
+
+# cool - mean plot Photosynthesis per RLeaf decreases with increasing site temperature
+
+
+
+
+######################################################## 
+## Traits and ecosystem
 #NPP v mean plot SLA
 myplot_NPP <- ggplot(data=Peru_Plot_Master.data, aes(x = log10(mean_sla_lamina_petiole), y = NPP))
 summary(myplot_NPP)
 
 myplot_NPP_nice <- myplot_NPP + geom_point(size = 3)
 myplot_NPP_nice + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+
+#GPP v mean plot SLA
+myplot_GPP <- ggplot(data=Peru_Plot_Master.data, aes(x = log10(mean_sla_lamina_petiole), y = GPP))
+summary(myplot_GPP)
+
+myplot_GPP_nice <- myplot_GPP + geom_point(size = 3)
+myplot_GPP_nice + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
 
 #mean plot SLA v elevation
 myplot_NPP <- ggplot(data=Peru_Plot_Master.data, aes(x = Elevation..m., y = mean_sla_lamina_petiole))
