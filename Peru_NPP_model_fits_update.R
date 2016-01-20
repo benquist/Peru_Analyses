@@ -43,7 +43,6 @@ library(plyr)
 names(Peru_Plot_Master.data)
 str(Peru_Plot_Master.data)
 
-
 ######### Calculated Variables ###############
 ##Calculate 1/kT
 
