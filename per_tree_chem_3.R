@@ -70,7 +70,6 @@ per_plot_chem_2 = ddply(photosyn, .(plot_code), summarize,
                         
 )
                           #dbh = dbh[1])
-
 write.csv(per_plot_chem_2, "per_plot_chem_2.csv")
 
 ### traits to add  
