@@ -1,3 +1,30 @@
+To DO!
+#0) Add funcitonality to run sampling multiple times
+    # calclulate moments on individual and combined runs, calc confidence intervals
+#1)  #SLA and LMA are flippen in this data set.  sla should be >1, lma<1
+  #recalculate sla from the mass and area of lamina-petiole (area/dry mass)
+  #make sure units match BIEN units
+#1.5) add mass-based photosyn and area-based photosyn  
+#2) create table of traits and moments for each site  
+  
+##########################
+Units stuff
+
+LMA =  g/m^2
+
+SLA =  m^2/g
+
+lamina area = m^2
+
+lamina mass = g
+
+photosynthesis = umol/m^2/s
+
+#The reported LMA and SLA values appear to come from a separate project associated with CHAMBASA.  In short, the lma values in the photosyn table were not automatically generated from the other columns directly.  These values of sla and lma come from a student who went through lots of images, judging how good they were, etc.and made corrections using the quality flags in the leaf area columns, and filtering based on those flags. For quality, there is a quality field in that table where "e” = exclude, "c" = caution, and "g" = good.  However, for the purpose of these analyses we may just want to report the LMA distribution using the ‘lma_lamina_petiole’ field as well as just recalculating lma which we can call ‘ma_lamina_petiole_calculated’ where you just divide the lamina dry mass by the lamina area as reported in those separate fields.  Make sense?
+
+#Do we have enough info now to plot out the LMA and photosynthesis distributions across the gradient?
+
+##########################
 #require(private.BRI)
 require(MASS)#Needed for distribution fitting
 require(fitdistrplus)
@@ -13,32 +40,28 @@ all_fp_trees<-read.csv("data_12192015/all_fp_trees.csv")
 all_trees<-read.csv("data_12192015/all_trees.csv")
 photosyn<-read.csv("data_12192015/photosyn.csv",colClasses = "character")
 #convert photosyn to match BIEN format
-#We can focus on the main  functional traits - leaf N, P, C and leaf SLA or LMA. 
+#We can focus on the main  functional traits - leaf N, P, C and leaf SLA or LMA. This also allows us to prune out duplicate measurements
 #Remember LMA is just the inverse of SLA. Also, leaf photosynthesis per unit area and per unit mass. 
 #We can also look at wood density but that  Is another dataset that needs to be found.
 
-Leaf_Nmass<-(as.numeric(photosyn$n_percent))#npc values will be in percent, BIEN data converted to match
-Leaf_Pmass<-(as.numeric(photosyn$p_corrected_percent))
-Leaf_Cmass<-(as.numeric(photosyn$c_percent))
-Specific_leaf_area_SLA<-as.numeric(photosyn$sla_lamina_petiole)
-photosyn<-cbind(photosyn,Leaf_Nmass,Leaf_Pmass,Leaf_Cmass,Specific_leaf_area_SLA)
-rm(Leaf_Cmass,Leaf_Pmass,Leaf_Nmass,Specific_leaf_area_SLA)
 photosyn$fp_species_id<-as.character(photosyn$fp_species_id)
 photosyn<-photosyn[which(photosyn$fp_species_name!="Indet"),]#prune out the observations which are "indetermined"
 photosyn<-photosyn[which(photosyn$fp_species_name!="Indet indet"),]#prune out the observations which are "indetermined"
 photosyn<-photosyn[which(photosyn$fp_species_name!="Indet indet"),]#prune out the observations which are "indetermined"
 #out<-photosyn[which(photosyn$fp_species_name=="Indet indet"),]#prune out the observations which are "indetermined"
 
+#convert units on cnp
+photosyn$n_percent<-as.numeric(as.character(photosyn$n_percent))*.01
+photosyn$p_corrected_percent<-as.numeric(as.character(photosyn$p_corrected_percent))*.01
+photosyn$c_percent<-as.numeric(as.character(photosyn$c_percent))*.01
 
 
 #there are duplicate measurements for many leaf values, so duplicate values and unwanted columns will be removed
+photosyn2<-photosyn[c(-1,-26:-56)]# drop columns associated with photosynthesis measurements for now, since they lead to duplicates on other values
 
-photosyn2<-as.data.frame(cbind(photosyn$leaf_id,photosyn$fp_species_name,photosyn$fp_genus_name,photosyn$fp_family_name,photosyn$plot_code,photosyn$Leaf_Nmass,photosyn$Leaf_Pmass,photosyn$Leaf_Cmass,photosyn$Specific_leaf_area_SLA,deparse.level = 2))
-names(photosyn2)<-c("leaf_id","fp_species_name","fp_genus_name","fp_family_name","plot_code","Leaf Nmass","Leaf Pmass","Leaf Cmass","Specific leaf area (SLA)")
 photosyn3<-unique(photosyn2)
 photosyn<-photosyn3
 rm(photosyn2,photosyn3)
-
 
 #remove indets from trees data
 all_fp_trees<-all_fp_trees[which(all_fp_trees$fp_species_name!="Indet indet"),]
@@ -64,6 +87,40 @@ for(i in 1:length(bien_traits[,1])){
   }#name is not NA
 }#bien standardizing loop
 
+########
+#Convert Peru SLA data to BIEN units
+
+photosyn$sla_lamina_petiole<-(as.numeric(as.character(photosyn$sla_lamina_petiole))*1000)
+photosyn$lma_lamina_petiole<-(as.numeric(as.character(photosyn$lma_lamina_petiole))/1000)
+
+#Calculate SLA and LMA from raw peru data
+lma_lamina_petiole_calculate<-(as.numeric(as.character(photosyn$laminapetiole_drymass))/as.numeric(as.character(photosyn$laminapetiole_area)))#mass/area
+sla_lamina_petiole_calculated<-(as.numeric(as.character(photosyn$laminapetiole_area))/as.numeric(as.character(photosyn$laminapetiole_drymass)))
+
+calculations differ, perhaps cm2/g was used?  compare to bien values
+
+traits_avail<-BIEN.trait.traits_per_species()
+bien_sla_available<-traits_avail[which(traits_avail$trait_name=="Specific leaf area (SLA)"),]  
+peru_spp_sla_in_bien<-bien_sla_available[which(bien_sla_available$taxon%in%photosyn$fp_species_name),]
+test_sp<-"Ocotea insularis"
+bien_sla_for_test<-BIEN.trait.traitbyspecies(trait = "Specific leaf area (SLA)",species = test_sp)
+peru_sla_for_test<-photosyn[which(photosyn$fp_species_name==test_sp),]  
+
+bien_area_available<-traits_avail[which(traits_avail$trait_name=="Leaf area"),]  
+peru_spp_area_in_bien<-bien_area_available[which(bien_area_available$taxon%in%photosyn$fp_species_name),]
+test_sp<-"Celtis schippii"
+
+bien_area_for_test<-BIEN.trait.traitbyspecies(trait = "Leaf area",species = test_sp)
+peru_area_for_test<-photosyn[which(photosyn$fp_species_name==test_sp),]  
+hist(as.numeric(as.character(peru_area_for_test$laminapetiole_area)))
+hist(as.numeric(as.character(bien_area_for_test$trait_value)))
+
+
+hist(peru_sla_for_test$sla_lamina_petiole)
+hist(as.numeric(as.character(bien_sla_for_test$trait_value)))
+################
+
+
 #1) Plot information
 plots<-unique(all_fp_trees$plot_code)
 sp_by_plot<-unique(cbind(as.character(all_fp_trees$plot_code),as.character(all_fp_trees$fp_species_name),as.character(all_fp_trees$fp_family_name)))
@@ -81,28 +138,28 @@ for( i in 1:length(sp_by_plot[,1])){
   #look within plot
   
   a_plot_data_sp_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_species_name==sp_i) ,]
-    traits_i[[1]]<-na.omit(as.matrix(a_plot_data_sp_i$`Leaf Nmass`))
+    traits_i[[1]]<-na.omit(as.matrix(a_plot_data_sp_i$n_percent))
   
   
     
   b_study_data_sp_i<-photosyn[which(photosyn$fp_species_name==sp_i) ,]#neat trick= using "which" prevents NA lines from showing up
-    traits_i[[2]]<-na.omit(as.matrix(b_study_data_sp_i$`Leaf Nmass`))
+    traits_i[[2]]<-na.omit(as.matrix(b_study_data_sp_i$n_percent))
   
   
   c_plot_data_genus_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_genus_name==genus_i) ,]
-    traits_i[[3]]<-na.omit(as.matrix(c_plot_data_genus_i$`Leaf Nmass`))
+    traits_i[[3]]<-na.omit(as.matrix(c_plot_data_genus_i$n_percent))
   
   
   
   d_study_data_genus_i<-photosyn[which(photosyn$fp_genus_name==genus_i) ,]
-    traits_i[[4]]<-na.omit(as.matrix(d_study_data_genus_i$`Leaf Nmass`))
+    traits_i[[4]]<-na.omit(as.matrix(d_study_data_genus_i$n_percent))
   
   
   e_plot_data_family_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_family_name==family_i) ,]
-    traits_i[[5]]<-na.omit(as.matrix(e_plot_data_family_i$`Leaf Nmass`))
+    traits_i[[5]]<-na.omit(as.matrix(e_plot_data_family_i$n_percent))
   
   f_study_data_family_i<-photosyn[which(photosyn$fp_family_name==family_i) ,]
-    traits_i[[6]]<-na.omit(as.matrix(f_study_data_family_i$`Leaf Nmass`))
+    traits_i[[6]]<-na.omit(as.matrix(f_study_data_family_i$n_percent))
   
   #BIEN bits need work
   
@@ -179,28 +236,28 @@ for( i in 1:length(sp_by_plot[,1])){
   #look within plot
   
   a_plot_data_sp_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_species_name==sp_i) ,]
-  traits_i[[1]]<-na.omit(as.matrix(a_plot_data_sp_i$`Leaf Cmass`))
+  traits_i[[1]]<-na.omit(as.matrix(a_plot_data_sp_i$c_percent))
   
   
   
   b_study_data_sp_i<-photosyn[which(photosyn$fp_species_name==sp_i) ,]#neat trick= using "which" prevents NA lines from showing up
-  traits_i[[2]]<-na.omit(as.matrix(b_study_data_sp_i$`Leaf Cmass`))
+  traits_i[[2]]<-na.omit(as.matrix(b_study_data_sp_i$c_percent))
   
   
   c_plot_data_genus_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_genus_name==genus_i) ,]
-  traits_i[[3]]<-na.omit(as.matrix(c_plot_data_genus_i$`Leaf Cmass`))
+  traits_i[[3]]<-na.omit(as.matrix(c_plot_data_genus_i$c_percent))
   
   
   
   d_study_data_genus_i<-photosyn[which(photosyn$fp_genus_name==genus_i) ,]
-  traits_i[[4]]<-na.omit(as.matrix(d_study_data_genus_i$`Leaf Cmass`))
+  traits_i[[4]]<-na.omit(as.matrix(d_study_data_genus_i$c_percent))
   
   
   e_plot_data_family_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_family_name==family_i) ,]
-  traits_i[[5]]<-na.omit(as.matrix(e_plot_data_family_i$`Leaf Cmass`))
+  traits_i[[5]]<-na.omit(as.matrix(e_plot_data_family_i$c_percent))
   
   f_study_data_family_i<-photosyn[which(photosyn$fp_family_name==family_i) ,]
-  traits_i[[6]]<-na.omit(as.matrix(f_study_data_family_i$`Leaf Cmass`))
+  traits_i[[6]]<-na.omit(as.matrix(f_study_data_family_i$c_percent))
   
   #BIEN bits need work
   
@@ -275,28 +332,28 @@ for( i in 1:length(sp_by_plot[,1])){
   #look within plot
   
   a_plot_data_sp_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_species_name==sp_i) ,]
-  traits_i[[1]]<-na.omit(as.matrix(a_plot_data_sp_i$`Leaf Pmass`))
+  traits_i[[1]]<-na.omit(as.matrix(a_plot_data_sp_i$p_corrected_percent))
   
   
   
   b_study_data_sp_i<-photosyn[which(photosyn$fp_species_name==sp_i) ,]#neat trick= using "which" prevents NA lines from showing up
-  traits_i[[2]]<-na.omit(as.matrix(b_study_data_sp_i$`Leaf Pmass`))
+  traits_i[[2]]<-na.omit(as.matrix(b_study_data_sp_i$p_corrected_percent))
   
   
   c_plot_data_genus_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_genus_name==genus_i) ,]
-  traits_i[[3]]<-na.omit(as.matrix(c_plot_data_genus_i$`Leaf Pmass`))
+  traits_i[[3]]<-na.omit(as.matrix(c_plot_data_genus_i$p_corrected_percent))
   
   
   
   d_study_data_genus_i<-photosyn[which(photosyn$fp_genus_name==genus_i) ,]
-  traits_i[[4]]<-na.omit(as.matrix(d_study_data_genus_i$`Leaf Pmass`))
+  traits_i[[4]]<-na.omit(as.matrix(d_study_data_genus_i$p_corrected_percent))
   
   
   e_plot_data_family_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_family_name==family_i) ,]
-  traits_i[[5]]<-na.omit(as.matrix(e_plot_data_family_i$`Leaf Pmass`))
+  traits_i[[5]]<-na.omit(as.matrix(e_plot_data_family_i$p_corrected_percent))
   
   f_study_data_family_i<-photosyn[which(photosyn$fp_family_name==family_i) ,]
-  traits_i[[6]]<-na.omit(as.matrix(f_study_data_family_i$`Leaf Pmass`))
+  traits_i[[6]]<-na.omit(as.matrix(f_study_data_family_i$p_corrected_percent))
   
   #BIEN bits need work
   
