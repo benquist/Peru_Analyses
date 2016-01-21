@@ -280,15 +280,18 @@ myplot_sitetempLeafNEffic
 myplot_sitetempNtoP <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., PlotNtoP)) + geom_point(size = 3) 
 
         #Boltzmann plot
-myplot_sitetempNtoP  <- ggplot(Peru_Plot_Master.data, aes(x = MAinvBT, y = PlotNtoP)) + geom_point(size = 3) 
+myplot_siteBiomassNtoP  <- ggplot(Peru_Plot_Master.data, aes(x = Aboveground_biomass, y = PlotNtoP)) + geom_point(size = 3) 
 theme_bw()
-myplot_sitetempNtoP
-myplot_sitetempNtoP  + scale_y_continuous(trans='log') #natural log plot
+myplot_siteBiomassNtoP
 
-    #* inrease in the site N:P ratio with temperature. Similar to the arguments of Kerkhoff et al. 2005
+    #* N:P is not related to above ground biomass. Constant?
 
+### Plot mean P vs. plot mean NUE - testing Kerkhoff et al. 2005
+myplot_sitePandNUE  <- ggplot(Peru_Plot_Master.data, aes(x = mean_p_percent, y = PhotosynthesisPerLeafN)) + geom_point(size = 3) 
+theme_bw()
+myplot_sitePandNUE
 
-
+## exciting  - this seems to support findings from Kerkhoff et al. 2005 showing a positive correlation ebtween foliar P and NUE but here we show this for leaf traits. 
 
 ######################################################## 
 ######################################################## 
