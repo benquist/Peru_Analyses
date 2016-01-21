@@ -44,8 +44,7 @@ names(Peru_Plot_Master.data)
 str(Peru_Plot_Master.data)
 
 ######### Calculated Variables ###############
-##Calculate 1/kT
-
+##Calculate Boltzmann 1/kT
 Peru_Plot_Master.data$MAinvBT <- 1/(0.00008617*(Peru_Plot_Master.data$Mean.annual.air.temperature..degC.+273.15))
 
 ##Calculate the leaf N productivity umol/m^2/s divided by foliar N
@@ -59,9 +58,12 @@ Peru_Plot_Master.data$PhotosynthesisPerRLeaf <- ((Peru_Plot_Master.data$mean_pho
 ##Calculate site N:P 
 Peru_Plot_Master.data$PlotNtoP <- ((Peru_Plot_Master.data$mean_n_percent)/ (Peru_Plot_Master.data$mean_p_percent))
 
-#################
-#####  Plots 
-################
+#Calculate NPPLeaf/RLeaf - Production per carbon respired
+Peru_Plot_Master.data$NPPLeafperRLeaf <- ((Peru_Plot_Master.data$NPPLeaf)/ (Peru_Plot_Master.data$RLeaf))
+
+####################################################################
+#####  Exploratory Plots 
+###################################################################
 
 #NPP v Biomass
 # http://www.sthda.com/english/wiki/ggplot2-axis-scales-and-transformations#log-and-sqrt-transformations
@@ -623,7 +625,7 @@ vif(m7)
     ## the positive trend reported by Kerkhoff et al. 2005 is there but it is not significant. 
 
 
-# RLeaf  v MAinvBT
+#### Leaf respiration - RLeaf  v MAinvBT
 
 m7 <- lm(log(RLeaf) ~ MAinvBT, data=Peru_Plot_Master.data)
 summary(m7) 
