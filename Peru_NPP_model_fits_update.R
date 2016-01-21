@@ -62,7 +62,7 @@ Peru_Plot_Master.data$PlotNtoP <- ((Peru_Plot_Master.data$mean_n_percent)/ (Peru
 Peru_Plot_Master.data$NPPLeafperRLeaf <- ((Peru_Plot_Master.data$NPPLeaf)/ (Peru_Plot_Master.data$RLeaf))
 
 ####################################################################
-#####  Exploratory Plots 
+#####  Exploratory Plots #################
 ###################################################################
 
 #NPP v Biomass
