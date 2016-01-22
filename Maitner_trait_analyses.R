@@ -735,7 +735,7 @@ for(i in 1:length(plots)){
     
     
   }#trait draw for plot i
-  trait_draws<-c(trait_draws,trait_vals_s) 
+  trait_draws<-cbind(trait_draws,trait_vals_s) 
       
   }#s occurrences
   draws[[i]]<-trait_draws
@@ -750,30 +750,47 @@ cmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Cmass,nreps=
 pmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Pmass,nreps=1000)
 nmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Nmass,nreps=1000)
 
-cmass_draws_naomit<-na.omit(cmass_draws)
-cmass_draws_naomit<-cmass_draws[ , ! apply( cmass_draws , 2 , function(x) all(is.na(x)) ) ]
 
-apply(cmass_draws_naomit,1,mean)
 require(moments)
 peru_draw_analysis<-function(draws_file){
-  draws_naomit<-draws_file[ , ! apply( draws_file , 2 , function(x) all(is.na(x)) ) ]#remove na columns
-  mean<-apply(cmass_draws_naomit,1,mean)
-  variance<-apply(cmass_draws_naomit,1,var)
-  skewness<-apply(cmass_draws_naomit,1,skewness)
-  kurtosis<-apply(cmass_draws_naomit,1,kurtosis)  
+  output<-NULL
+  for(i in 1:length(draws_file)){
+  #draws_i<-draws_file[[i]]
+  #draws_naomit<-draws_file[[i]][ , ! apply( draws_file[[i]] , 2 , function(x) all(is.na(x)) ) ]#remove na columns
+    
+  draws_naomit<-draws_file[[i]][ , ! apply( draws_file[[i]] , 2 , function(x) all(is.na(x)) ) ]#remove na columns
+  plot<-as.character(plots[i])
+  mean<-apply(draws_naomit,1,mean)
+  variance<-apply(draws_naomit,1,var)
+  skewness<-apply(draws_naomit,1,skewness)
+  kurtosis<-apply(draws_naomit,1,kurtosis)  
   mean95<-sort(mean,decreasing = FALSE)[(.025*length(mean)+1):(0.975*length(mean))]
   variance95<-sort(variance,decreasing = FALSE)[(.025*length(variance)+1):(0.975*length(variance))]
   skewness95<-sort(skewness,decreasing = FALSE)[(.025*length(skewness)+1):(0.975*length(skewness))]
   kurtosis95<-sort(kurtosis,decreasing = FALSE)[(.025*length(kurtosis)+1):(0.975*length(kurtosis))]
-  mean<- c(min(mean95),mean(mean),max(mean95))
-  variance<- c(min(variance95),mean(variance),max(variance95))
-  skewness<- c(min(skewness95),mean(skewness),max(skewness95))
-  kurtosis<- c(min(kurtosis95),mean(kurtosis),max(kurtosis95))
+  mean<- cbind(min(mean95),mean(mean),max(mean95))
+  variance<- cbind(min(variance95),mean(variance),max(variance95))
+  skewness<- cbind(min(skewness95),mean(skewness),max(skewness95))
+  kurtosis<- cbind(min(kurtosis95),mean(kurtosis),max(kurtosis95))
   
-  output<-rbind(mean,variance,skewness,kurtosis)
-  colnames(output)<-c("Moment","Lower","Mean","Upper")  
-  return(output)
+  #output_i<-rbind(mean,variance,skewness,kurtosis)
+  output_i<-cbind(plot,mean,variance,skewness,kurtosis)
+  
+  
+  colnames(output_i)<-c("Plot","Mean Lower","Mean Mean","Mean Upper",
+                        
+                        "Variance Lower","Variance Mean","Variance Upper",
+                        "Skewness Lower","Skewness Mean","Skewness Upper",
+                        "Kurtosis Lower","Kurtosis Mean","Kurtosis Upper")
+  output<-rbind(output,output_i)
+  
+}#for i loop
+    row.names(output)<-NULL
+    output<-as.data.frame(output)
+    return(output)
   
 }
 
-peru_moments<-peru_draw_analysis(draws_file = cmass_draws)
+peru_moments_cmass<-peru_draw_analysis(draws_file = cmass_draws)
+peru_moments_pmass<-peru_draw_analysis(draws_file = pmass_draws)
+peru_moments_nmass<-peru_draw_analysis(draws_file = nmass_draws)
