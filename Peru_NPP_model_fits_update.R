@@ -44,25 +44,26 @@ names(Peru_Plot_Master.data)
 str(Peru_Plot_Master.data)
 
 ######### Calculated Variables ###############
-##Calculate 1/kT
-
+##Calculate Boltzmann 1/kT
 Peru_Plot_Master.data$MAinvBT <- 1/(0.00008617*(Peru_Plot_Master.data$Mean.annual.air.temperature..degC.+273.15))
 
-##Calculate the leaf carbon efficiency photosynthesis umol/m^2/s divided by RLeaf
+##Calculate the leaf N productivity umol/m^2/s divided by foliar N
 Peru_Plot_Master.data$PhotosynthesisPerLeafN <- ((Peru_Plot_Master.data$mean_photosynthesis)/(Peru_Plot_Master.data$mean_n_percent))
 
-        #* calculate leaf carbon efficiency per leaf first before calculating the 
-        # plot average?
+        #* calculate leaf carbon efficiency per leaf first before calculating the plot average?
 
-##Calculate site leaf nitrogen use efficiency
+##Calculate site leaf carbon production efficiency
 Peru_Plot_Master.data$PhotosynthesisPerRLeaf <- ((Peru_Plot_Master.data$mean_photosynthesis)/(Peru_Plot_Master.data$RLeaf))
 
 ##Calculate site N:P 
 Peru_Plot_Master.data$PlotNtoP <- ((Peru_Plot_Master.data$mean_n_percent)/ (Peru_Plot_Master.data$mean_p_percent))
 
-#################
-#####  Plots 
-################
+#Calculate NPPLeaf/RLeaf - Production per carbon respired
+Peru_Plot_Master.data$NPPLeafperRLeaf <- ((Peru_Plot_Master.data$NPPLeaf)/ (Peru_Plot_Master.data$RLeaf))
+
+####################################################################
+#####  Exploratory Plots #################
+###################################################################
 
 #NPP v Biomass
 # http://www.sthda.com/english/wiki/ggplot2-axis-scales-and-transformations#log-and-sqrt-transformations
@@ -273,22 +274,25 @@ theme_bw()
 # log-log plot without log tick marks
 myplot_sitetempLeafNEffic 
 
-    ## * cool - strong decrease in photosynthesis per leaf N with mean annual air temp. This indicates that colder sites have higher nitrogen use efficiency
+    ## * cool - strong decrease in photosynthesis per leaf N with mean annual air temp. This indicates that colder sites have higher N-productivity
 
 ###### plot temperature v leafN:P
 
 myplot_sitetempNtoP <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., PlotNtoP)) + geom_point(size = 3) 
 
         #Boltzmann plot
-myplot_sitetempNtoP  <- ggplot(Peru_Plot_Master.data, aes(x = MAinvBT, y = PlotNtoP)) + geom_point(size = 3) 
+myplot_siteBiomassNtoP  <- ggplot(Peru_Plot_Master.data, aes(x = Aboveground_biomass, y = PlotNtoP)) + geom_point(size = 3) 
 theme_bw()
-myplot_sitetempNtoP
-myplot_sitetempNtoP  + scale_y_continuous(trans='log') #natural log plot
+myplot_siteBiomassNtoP
 
-    #* inrease in the site N:P ratio with temperature. Similar to the arguments of Kerkhoff et al. 2005
+    #* N:P is not related to above ground biomass. Constant?
 
+### Plot mean P vs. plot mean N productivity - testing Kerkhoff et al. 2005
+myplot_sitePandNUE  <- ggplot(Peru_Plot_Master.data, aes(x = mean_p_percent, y = PhotosynthesisPerLeafN)) + geom_point(size = 3) 
+theme_bw()
+myplot_sitePandNUE
 
-
+## exciting  - this seems to support findings from Kerkhoff et al. 2005 showing a positive correlation ebtween foliar P and NUE but here we show this for leaf traits. 
 
 ######################################################## 
 ######################################################## 
@@ -365,6 +369,8 @@ summary(myplot_NPP)
 myplot_RLeaf_nice <- myplot_RLeaf + geom_point(size = 3)
 myplot_RLeaf_nice + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
+
+  #unlike photosynthesis, foliar respiration does show a temperature dependency.
 
 ### dual plots
 
@@ -605,7 +611,30 @@ crPlots(m7)
 confint(m7)
 vif(m7) 
 
-    #* ah, plot N:P is not related to NUE
+    #* ah, plot N:P is not related to NUE BUT! Kerkhoff et al predicts that changes in P then drives changes in NUE. True for chambasa?
+
+m7 <- lm(log10(PhotosynthesisPerLeafN) ~ log10(mean_p_percent), data=Peru_Plot_Master.data)
+summary(m7) 
+AIC(m7)
+modelEffectSizes(m7)  #lm.sunSquares is depreciated
+avPlots(m7)
+crPlots(m7)
+confint(m7)
+vif(m7)
+
+    ## the positive trend reported by Kerkhoff et al. 2005 is there but it is not significant. 
+
+
+#### Leaf respiration - RLeaf  v MAinvBT
+
+m7 <- lm(log(RLeaf) ~ MAinvBT, data=Peru_Plot_Master.data)
+summary(m7) 
+AIC(m7)
+modelEffectSizes(m7)  #lm.sunSquares is depreciated
+avPlots(m7)
+crPlots(m7)
+confint(m7)
+vif(m7)
 
 ######################################### 
 ##### pairs plots
