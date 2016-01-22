@@ -701,9 +701,9 @@ lines(density(na.omit(trait_list[[9]])),col="purple")
 lines(density(na.omit(trait_list[[10]])),col="black")  
 
 ###############################
-peru_draws_beta_distribution<-function(output_file,trait_name,nreps){
+peru_draws_beta_distribution<-function(output_file,nreps){
 plots<-unique(all_fp_trees$plot_code)
-assign(paste(trait_name,"_draws",sep = ""),list())
+draws<-list()
 for(i in 1:length(plots)){
   plot_i<-as.character(plots[i])
   occurrences_i<-sp_by_plot[sp_by_plot[,1]==plot_i,]
@@ -712,7 +712,7 @@ for(i in 1:length(plots)){
     sp_s<-occurrences_i[,2][s]
     occ_s<-as.numeric(occurrences_i[,4][s])    
     #vals<-output_Leaf_Cmass[which(output_Leaf_Cmass[,1]==plot_i & output_Leaf_Cmass[,2]==sp_s),]
-    vals<-output_Leaf_Cmass[which(output_file[,1]==plot_i & output_file[,2]==sp_s),]
+    vals<-output_file[which(output_file[,1]==plot_i & output_file[,2]==sp_s),]
     shape1_s<-as.numeric(vals[3])
     shape2_s<-as.numeric(vals[4])
      trait_vals_s<-NULL
@@ -735,13 +735,45 @@ for(i in 1:length(plots)){
     
     
   }#trait draw for plot i
-  trait_draws<-cbind(trait_draws,trait_vals_s)  
+  trait_draws<-c(trait_draws,trait_vals_s) 
       
   }#s occurrences
-  CMass[[i]]<-trait_draws
-  
-  #add code here to add trait draws to list  
+  draws[[i]]<-trait_draws
+  #add code here to add trait draws to list    
 }#cmass trait draw
-
+return(draws)
 rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
 }
+
+#########
+cmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Cmass,nreps=1000)
+pmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Pmass,nreps=1000)
+nmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Nmass,nreps=1000)
+
+cmass_draws_naomit<-na.omit(cmass_draws)
+cmass_draws_naomit<-cmass_draws[ , ! apply( cmass_draws , 2 , function(x) all(is.na(x)) ) ]
+
+apply(cmass_draws_naomit,1,mean)
+require(moments)
+peru_draw_analysis<-function(draws_file){
+  draws_naomit<-draws_file[ , ! apply( draws_file , 2 , function(x) all(is.na(x)) ) ]#remove na columns
+  mean<-apply(cmass_draws_naomit,1,mean)
+  variance<-apply(cmass_draws_naomit,1,var)
+  skewness<-apply(cmass_draws_naomit,1,skewness)
+  kurtosis<-apply(cmass_draws_naomit,1,kurtosis)  
+  mean95<-sort(mean,decreasing = FALSE)[(.025*length(mean)+1):(0.975*length(mean))]
+  variance95<-sort(variance,decreasing = FALSE)[(.025*length(variance)+1):(0.975*length(variance))]
+  skewness95<-sort(skewness,decreasing = FALSE)[(.025*length(skewness)+1):(0.975*length(skewness))]
+  kurtosis95<-sort(kurtosis,decreasing = FALSE)[(.025*length(kurtosis)+1):(0.975*length(kurtosis))]
+  mean<- c(min(mean95),mean(mean),max(mean95))
+  variance<- c(min(variance95),mean(variance),max(variance95))
+  skewness<- c(min(skewness95),mean(skewness),max(skewness95))
+  kurtosis<- c(min(kurtosis95),mean(kurtosis),max(kurtosis95))
+  
+  output<-rbind(mean,variance,skewness,kurtosis)
+  colnames(output)<-c("Moment","Lower","Mean","Upper")  
+  return(output)
+  
+}
+
+peru_moments<-peru_draw_analysis(draws_file = cmass_draws)
