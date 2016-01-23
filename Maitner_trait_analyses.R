@@ -1,9 +1,6 @@
 To DO!
 #0) Add funcitonality to run sampling multiple times
     # calclulate moments on individual and combined runs, calc confidence intervals
-#1)  #SLA and LMA are flippen in this data set.  sla should be >1, lma<1
-  #recalculate sla from the mass and area of lamina-petiole (area/dry mass)
-  #make sure units match BIEN units
 #1.5) add mass-based photosyn and area-based photosyn  
 #2) create table of traits and moments for each site  
   
@@ -14,10 +11,15 @@ LMA =  g/m^2
 
 SLA =  m^2/g
 
-lamina area = m^2
+lamina area = m^2#one of these is wrong, since it doesn't match the reported sla/lma
 
-lamina mass = g
+lamina mass = g# one of these has to be wrong
 
+photosyn<-read.csv("data_12192015/photosyn.csv",colClasses = "character")
+
+plot(as.numeric(as.character(photosyn$laminapetiole_area))/as.numeric(as.character(photosyn$laminapetiole_drymass))~as.numeric(as.character(photosyn$sla_lamina_petiole)))
+#as per the plot, the units differ by orders of magnitude, but are otherwise identical.  
+#the sla and lma seem to be correct, since they agree with the bien output
 photosynthesis = umol/m^2/s
 
 #The reported LMA and SLA values appear to come from a separate project associated with CHAMBASA.  In short, the lma values in the photosyn table were not automatically generated from the other columns directly.  These values of sla and lma come from a student who went through lots of images, judging how good they were, etc.and made corrections using the quality flags in the leaf area columns, and filtering based on those flags. For quality, there is a quality field in that table where "e” = exclude, "c" = caution, and "g" = good.  However, for the purpose of these analyses we may just want to report the LMA distribution using the ‘lma_lamina_petiole’ field as well as just recalculating lma which we can call ‘ma_lamina_petiole_calculated’ where you just divide the lamina dry mass by the lamina area as reported in those separate fields.  Make sense?
@@ -86,38 +88,16 @@ for(i in 1:length(bien_traits[,1])){
   }#if n or p mass
   }#name is not NA
 }#bien standardizing loop
-
-########
+rm(i)
 #Convert Peru SLA data to BIEN units
 
 photosyn$sla_lamina_petiole<-(as.numeric(as.character(photosyn$sla_lamina_petiole))*1000)
 photosyn$lma_lamina_petiole<-(as.numeric(as.character(photosyn$lma_lamina_petiole))/1000)
 
-#Calculate SLA and LMA from raw peru data
-lma_lamina_petiole_calculate<-(as.numeric(as.character(photosyn$laminapetiole_drymass))/as.numeric(as.character(photosyn$laminapetiole_area)))#mass/area
-sla_lamina_petiole_calculated<-(as.numeric(as.character(photosyn$laminapetiole_area))/as.numeric(as.character(photosyn$laminapetiole_drymass)))
-
-calculations differ, perhaps cm2/g was used?  compare to bien values
-
-traits_avail<-BIEN.trait.traits_per_species()
-bien_sla_available<-traits_avail[which(traits_avail$trait_name=="Specific leaf area (SLA)"),]  
-peru_spp_sla_in_bien<-bien_sla_available[which(bien_sla_available$taxon%in%photosyn$fp_species_name),]
-test_sp<-"Ocotea insularis"
-bien_sla_for_test<-BIEN.trait.traitbyspecies(trait = "Specific leaf area (SLA)",species = test_sp)
-peru_sla_for_test<-photosyn[which(photosyn$fp_species_name==test_sp),]  
-
-bien_area_available<-traits_avail[which(traits_avail$trait_name=="Leaf area"),]  
-peru_spp_area_in_bien<-bien_area_available[which(bien_area_available$taxon%in%photosyn$fp_species_name),]
-test_sp<-"Celtis schippii"
-
-bien_area_for_test<-BIEN.trait.traitbyspecies(trait = "Leaf area",species = test_sp)
-peru_area_for_test<-photosyn[which(photosyn$fp_species_name==test_sp),]  
-hist(as.numeric(as.character(peru_area_for_test$laminapetiole_area)))
-hist(as.numeric(as.character(bien_area_for_test$trait_value)))
+########
 
 
-hist(peru_sla_for_test$sla_lamina_petiole)
-hist(as.numeric(as.character(bien_sla_for_test$trait_value)))
+#Calculate SLA and LMA from raw peru data: units still seem off by a factor of 10, but otherwise identical, no reason to use both.
 ################
 
 
@@ -176,7 +156,7 @@ for( i in 1:length(sp_by_plot[,1])){
       
   traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
   
-  if(length(traits_i)>1){
+  if(length(traits_i)>0){
   traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
   }
   
@@ -274,7 +254,7 @@ for( i in 1:length(sp_by_plot[,1])){
   
   traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
   
-  if(length(traits_i)>1){
+  if(length(traits_i)>0){
     traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
   }
   
@@ -370,7 +350,7 @@ for( i in 1:length(sp_by_plot[,1])){
   
   traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
   
-  if(length(traits_i)>1){
+  if(length(traits_i)>0){
     traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
   }
   
@@ -416,7 +396,7 @@ rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e
 rm(traits_i,sp_i,genus_i,family_i,i,dist_i,plot_i,shape1_i,shape2_i)
 
 #############################################
-#photosyn$`Specific leaf area (SLA)`
+#photosyn$sla_lamina_petiole
 
 output_Leaf_SLA<-NULL
 for( i in 1:length(sp_by_plot[,1])){
@@ -429,30 +409,30 @@ for( i in 1:length(sp_by_plot[,1])){
   #look within plot
   
   a_plot_data_sp_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_species_name==sp_i) ,]
-  traits_i[[1]]<-na.omit(as.matrix(a_plot_data_sp_i$`Specific leaf area (SLA)`))
+  traits_i[[1]]<-na.omit(as.matrix(a_plot_data_sp_i$sla_lamina_petiole))
   
   
   
   b_study_data_sp_i<-photosyn[which(photosyn$fp_species_name==sp_i) ,]#neat trick= using "which" prevents NA lines from showing up
-  traits_i[[2]]<-na.omit(as.matrix(b_study_data_sp_i$`Specific leaf area (SLA)`))
+  traits_i[[2]]<-na.omit(as.matrix(b_study_data_sp_i$sla_lamina_petiole))
   
   
   c_plot_data_genus_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_genus_name==genus_i) ,]
-  traits_i[[3]]<-na.omit(as.matrix(c_plot_data_genus_i$`Specific leaf area (SLA)`))
+  traits_i[[3]]<-na.omit(as.matrix(c_plot_data_genus_i$sla_lamina_petiole))
   
   
   
   d_study_data_genus_i<-photosyn[which(photosyn$fp_genus_name==genus_i) ,]
-  traits_i[[4]]<-na.omit(as.matrix(d_study_data_genus_i$`Specific leaf area (SLA)`))
+  traits_i[[4]]<-na.omit(as.matrix(d_study_data_genus_i$sla_lamina_petiole))
   
   
   e_plot_data_family_i<-photosyn[which(photosyn$plot_code==plot_i & photosyn$fp_family_name==family_i) ,]
-  traits_i[[5]]<-na.omit(as.matrix(e_plot_data_family_i$`Specific leaf area (SLA)`))
+  traits_i[[5]]<-na.omit(as.matrix(e_plot_data_family_i$sla_lamina_petiole))
   
   f_study_data_family_i<-photosyn[which(photosyn$fp_family_name==family_i) ,]
-  traits_i[[6]]<-na.omit(as.matrix(f_study_data_family_i$`Specific leaf area (SLA)`))
+  traits_i[[6]]<-na.omit(as.matrix(f_study_data_family_i$sla_lamina_petiole))
   
-  #BIEN bits need work
+  #BIEN bits
   
   g_bien_data_sp_i<-bien_traits[which(bien_traits$species==sp_i & bien_traits$trait_name=="Specific leaf area (SLA)"),]
   traits_i[[7]]<-na.omit(as.matrix(g_bien_data_sp_i$trait_value))
@@ -466,22 +446,47 @@ for( i in 1:length(sp_by_plot[,1])){
   
   
   traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
-  
-  if(length(traits_i)!=0){
+ 
+  ###
+  if(length(traits_i)>0){
     traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
+  }
+  
+  if(length(traits_i)>1){
     #traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
-    print(length(traits_i[,1]))
-    dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
-    mean_i<-dist_i$estimate[1]
-    sd_i<-dist_i$estimate[2]
-    output_Leaf_SLA<-rbind(output_Leaf_SLA,cbind(plot_i,sp_i,mean_i,sd_i))
+    print(length(traits_i))
+    #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
+    #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
+    dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "gamma",method="BFGS")
+    shape_i<-dist_i$estimate[1]
+    rate_i<-dist_i$estimate[2]
+    #mean_i<-dist_i$estimate[1]
+    #sd_i<-dist_i$estimate[2]
+    output_Leaf_SLA<-rbind(output_Leaf_SLA,cbind(plot_i,sp_i,shape_i,rate_i))
     
     #calculate
     
-  }else{
-    #traits_i<-NA  
-    #do something here if trait is NA?
-  }
+  }else{#if>1
+    
+    if(length(traits_i)==1){
+      traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
+      #traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
+      print(length(traits_i[,1]))
+      #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
+      #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
+      #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i))),distr = "beta", method = ("mle"))
+      shape_i<-as.numeric(traits_i[1])
+      rate_i<-NA
+      #mean_i<-dist_i$estimate[1]
+      #sd_i<-dist_i$estimate[2]
+      output_Leaf_SLA<-rbind(output_Leaf_SLA,cbind(plot_i,sp_i,shape_i,rate_i))
+      
+      #calculate
+      
+    }#if=1
+  }#else
+  
+  ### 
   
   
   
@@ -489,7 +494,7 @@ for( i in 1:length(sp_by_plot[,1])){
 
 rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
    g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
-rm(traits_i,sp_i,genus_i,family_i,i,dist_i,mean_i,sd_i,plot_i,plots)
+rm(traits_i,sp_i,genus_i,family_i,i,dist_i,shape_i,rate_i,plot_i)
 
 
 
@@ -512,6 +517,8 @@ rm(occurrences,i,occurrences_i,plot_i,sp_i)
 #####################################################
 
 #Now, we just need to draw values according to the trait distributions
+Add code to allow replication of draws!!
+
 plots<-unique(all_fp_trees$plot_code)
 CMass<-list()
 
@@ -693,3 +700,97 @@ lines(density(na.omit(trait_list[[8]])),col="violet")
 lines(density(na.omit(trait_list[[9]])),col="purple")  
 lines(density(na.omit(trait_list[[10]])),col="black")  
 
+###############################
+peru_draws_beta_distribution<-function(output_file,nreps){
+plots<-unique(all_fp_trees$plot_code)
+draws<-list()
+for(i in 1:length(plots)){
+  plot_i<-as.character(plots[i])
+  occurrences_i<-sp_by_plot[sp_by_plot[,1]==plot_i,]
+  trait_draws<-NULL
+  for(s in 1:length(occurrences_i[,1])){
+    sp_s<-occurrences_i[,2][s]
+    occ_s<-as.numeric(occurrences_i[,4][s])    
+    #vals<-output_Leaf_Cmass[which(output_Leaf_Cmass[,1]==plot_i & output_Leaf_Cmass[,2]==sp_s),]
+    vals<-output_file[which(output_file[,1]==plot_i & output_file[,2]==sp_s),]
+    shape1_s<-as.numeric(vals[3])
+    shape2_s<-as.numeric(vals[4])
+     trait_vals_s<-NULL
+  for(r in 1:nreps){    
+    if(is.na(shape2_s)==FALSE){
+      #trait_vals_s<-rnorm(n=occ_s,mean=mean_s,sd = sd_s)
+      trait_vals_r<-rbeta(n=occ_s,shape1=shape1_s,shape2 = shape2_s)
+      trait_vals_s<-rbind(trait_vals_s,trait_vals_r)
+      
+    }
+    
+    if(is.na(shape2_s)==TRUE){
+      
+      
+      trait_vals_r<-matrix(shape1_s,occ_s,nrow=1) 
+      trait_vals_s<-rbind(trait_vals_s,trait_vals_r)
+      
+    }
+    
+    
+    
+  }#trait draw for plot i
+  trait_draws<-cbind(trait_draws,trait_vals_s) 
+      
+  }#s occurrences
+  draws[[i]]<-trait_draws
+  #add code here to add trait draws to list    
+}#cmass trait draw
+return(draws)
+rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
+}
+
+#########
+cmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Cmass,nreps=1000)
+pmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Pmass,nreps=1000)
+nmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Nmass,nreps=1000)
+
+
+require(moments)
+peru_draw_analysis<-function(draws_file){
+  output<-NULL
+  for(i in 1:length(draws_file)){
+  #draws_i<-draws_file[[i]]
+  #draws_naomit<-draws_file[[i]][ , ! apply( draws_file[[i]] , 2 , function(x) all(is.na(x)) ) ]#remove na columns
+    
+  draws_naomit<-draws_file[[i]][ , ! apply( draws_file[[i]] , 2 , function(x) all(is.na(x)) ) ]#remove na columns
+  plot<-as.character(plots[i])
+  mean<-apply(draws_naomit,1,mean)
+  variance<-apply(draws_naomit,1,var)
+  skewness<-apply(draws_naomit,1,skewness)
+  kurtosis<-apply(draws_naomit,1,kurtosis)  
+  mean95<-sort(mean,decreasing = FALSE)[(.025*length(mean)+1):(0.975*length(mean))]
+  variance95<-sort(variance,decreasing = FALSE)[(.025*length(variance)+1):(0.975*length(variance))]
+  skewness95<-sort(skewness,decreasing = FALSE)[(.025*length(skewness)+1):(0.975*length(skewness))]
+  kurtosis95<-sort(kurtosis,decreasing = FALSE)[(.025*length(kurtosis)+1):(0.975*length(kurtosis))]
+  mean<- cbind(min(mean95),mean(mean),max(mean95))
+  variance<- cbind(min(variance95),mean(variance),max(variance95))
+  skewness<- cbind(min(skewness95),mean(skewness),max(skewness95))
+  kurtosis<- cbind(min(kurtosis95),mean(kurtosis),max(kurtosis95))
+  
+  #output_i<-rbind(mean,variance,skewness,kurtosis)
+  output_i<-cbind(plot,mean,variance,skewness,kurtosis)
+  
+  
+  colnames(output_i)<-c("Plot","Mean Lower","Mean Mean","Mean Upper",
+                        
+                        "Variance Lower","Variance Mean","Variance Upper",
+                        "Skewness Lower","Skewness Mean","Skewness Upper",
+                        "Kurtosis Lower","Kurtosis Mean","Kurtosis Upper")
+  output<-rbind(output,output_i)
+  
+}#for i loop
+    row.names(output)<-NULL
+    output<-as.data.frame(output)
+    return(output)
+  
+}
+
+peru_moments_cmass<-peru_draw_analysis(draws_file = cmass_draws)
+peru_moments_pmass<-peru_draw_analysis(draws_file = pmass_draws)
+peru_moments_nmass<-peru_draw_analysis(draws_file = nmass_draws)
