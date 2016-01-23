@@ -415,7 +415,6 @@ summary(ModelTDTNP)
 confint(ModelTDTNP)
 coef(ModelTDTNP)
 
-
 multiplot(a1, a2, cols=2)
 
 ###

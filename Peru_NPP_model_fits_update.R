@@ -1,18 +1,14 @@
 
 
-##############################
-#  Peru CHAMBASA plot analyses
+########################################################################
+#  Peru CHAMBASA preliminary NPP, Trait, climate plot analyses
 #   Brian J. Enquist
 #  12/20/15
-#  
-##############################
+########################################################################
 
 # summary notes - overall simple pairwise correlation of NPP with
 # above ground biomass appears to explain most of the variation
-# in NPP. Traits expalin little. Climate including temp.
-# and solar radiation appear to also explain a lot of the 
-# variation but not as much as biomass. Biomass exponents include
-# MST predicted value. 
+# in NPP. Additional multiple variable model selection approaches points to biomass as key driver of NPP and that Traits and climate expalin little variation in NPP and GPP. Climate including temp and solar radiation appear to also explain a lot of the variation but not as much as biomass. Biomass exponents include MST predicted value. Interestingly, plot level shifts in foliar N:P appear to covary with plot temperature in a way that is consistent with adaptive shifts in N:P -> increase foliar N-productivity
 
 #Peru_Plot_Master.data <- read.csv(file="/Users/brianjenquist/GitHub/R/Peru_Analyses/Peru_Gradient_NPP_Merged.csv",header=T)
 
@@ -242,7 +238,15 @@ theme_bw()
 
 # log-log plot without log tick marks
 myplot_sitetempPlotNtoP 
+#MST model fit
+ModelNtoPvMAinvBT <- lm(log(PlotNtoP) ~ MAinvBT, Peru_Plot_Master.data)
 
+summary(ModelNtoPvMAinvBT)
+AICc(ModelNtoPvMAinvBT)
+confint(ModelNtoPvMAinvBT)
+coef(ModelNtoPvMAinvBT)
+
+  #*Boltzman fit is around -0.3 indicating that N:P
 
 ###### site temperature v RLeaf
 myplot_sitetempRLeaf <- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., RLeaf)) + geom_point(size = 3) 
@@ -415,8 +419,19 @@ myplot_RLeaf_nice + theme(panel.grid.major = element_blank(), panel.grid.minor =
 
   #unlike photosynthesis, foliar respiration does show a temperature dependency.
 
+#### PhotosynthesisPerLeafN v log10(mean_sla_lamina_petiole)
+myplot_NProductionvsSLA <- ggplot(Peru_Plot_Master.data, aes(PhotosynthesisPerLeafN, mean_sla_lamina_petiole)) + geom_point(size = 3)
+  theme_bw()
 
-NPPLeafperRLeaf
+  myplot_NProductionvsSLA
+
+  # model fits - linear model
+ModelNProductionvsSLA <- lm(mean_sla_lamina_petiole ~ PhotosynthesisPerLeafN, Peru_Plot_Master.data)
+
+summary(ModelNProductionvsSLA)
+confint(ModelNProductionvsSLA)
+coef(NProductionvsSLA)
+
 
 
 ### dual plots
@@ -478,10 +493,11 @@ AIC(m1NPP_N)
 modelEffectSizes(m1NPP_N)  #lm.sunSquares is depreciated
 confint(m1NPP_N)
 
-## NPP climate via Boltzman temp
-m1NPP_temp <- lm(log10(NPP)~ MAinvBT, data=Peru_Plot_Master.data)
+## NPP climate via Boltzman temp,
+m1NPP_temp <- lm(log(NPP)~ MAinvBT, data=Peru_Plot_Master.data)
 summary(m1NPP_temp) 
 AIC(m1NPP_temp)
+AICc(m1NPP_temp)
 modelEffectSizes(m1NPP_temp)  #lm.sunSquares is depreciated
 confint(m1NPP_temp)
 
@@ -489,6 +505,7 @@ confint(m1NPP_temp)
 m1NPP_precip <- lm(log10(NPP)~ Precipitation..mm.yr.1., data=Peru_Plot_Master.data)
 summary(m1NPP_precip) 
 AIC(m1NPP_precip)
+AICc(m1NPP_precip)
 modelEffectSizes(m1NPP_precip)  #lm.sunSquares is depreciated
 confint(m1NPP_precip)
 
@@ -496,6 +513,7 @@ confint(m1NPP_precip)
 m1GPP <- lm(log10(GPP)~ log10(Aboveground_biomass), data=Peru_Plot_Master.data)
 summary(m1GPP) 
 AIC(m1GPP)
+AICc(m1GPP)
 modelEffectSizes(m1GPP)  #lm.sunSquares is depreciated
 confint(m1GPP)
 
@@ -503,6 +521,7 @@ confint(m1GPP)
 m1Temp <- lm(log(NPP)~ MAinvBT, data=Peru_Plot_Master.data)
 summary(m1Temp) 
 AIC(m1Temp)
+AICc(m1Temp)
 modelEffectSizes(m1Temp)  #lm.sunSquares is depreciated
 confint(m1Temp )
 
@@ -524,6 +543,7 @@ vif(m2)
 m3 <- lm(log10(NPP)~ Soil.moisture....+ MAinvBT + log10(Aboveground_biomass), data=Peru_Plot_Master.data)
 summary(m3) 
 AIC(m3)
+AICc(m3)
 modelEffectSizes(m3)  #lm.sunSquares is depreciated
 avPlots(m3)
 crPlots(m3)
@@ -707,11 +727,14 @@ vif(m7)
 m7 <- lm(log(RLeaf) ~ MAinvBT, data=Peru_Plot_Master.data)
 summary(m7) 
 AIC(m7)
+AICc(m7)
 modelEffectSizes(m7)  #lm.sunSquares is depreciated
 avPlots(m7)
 crPlots(m7)
 confint(m7)
 vif(m7)
+
+
 
 ######################################### 
 ##### pairs plots
@@ -836,7 +859,6 @@ plot(fit5, type="s")
 
 
 
-
 #### Predicting environmental temperature from plot traits
 fit6 <- glmulti(MAinvBT ~ Aboveground_biomass + log10(mean_sla_lamina_petiole) + var_sla_lamina_petiole + mean_n_percent + mean_photosynthesis + var_photosynthesis + PhotosynthesisPerLeafN + PlotNtoP + PhotosynthesisPerLeafN, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
 summary(fit6)
@@ -878,3 +900,26 @@ NPP.tree.prune <- prune.tree(NPP.tree, best = 4)
 plot(NPP.tree.prune, type = "uniform")
 text(NPP.tree.prune, cex = 0.5, all = T)
 
+
+############################################################################
+# PCA analyses
+#######################################
+
+chambasapca <- princomp(~mean_sla_lamina_petiole + mean_n_percent + mean_p_percent + mean_photosynthesis + PhotosynthesisPerLeafN + PlotNtoP + PhotosynthesisPerLeafN, data=Peru_Plot_Master.data, cor=TRUE)
+
+#chambasapca <- princomp(~Aboveground_biomass + log10(mean_sla_lamina_petiole) + mean_n_percent + mean_photosynthesis + PhotosynthesisPerLeafN + PlotNtoP + PhotosynthesisPerLeafN, data=Peru_Plot_Master.data, cor=TRUE)
+
+summary(chambasapca)
+loadings(chambasapca)
+biplot(chambasapca, col=c("gray","red"),cex=c(0.3,0.5))
+screeplot(chambasapca)
+chambasapca$scores
+chambasapca$loadings
+  #* first two principle components explain about 72% of the variation. 
+
+library(corrplot)
+library(qgraph)
+qgraph(cor(Peru_Plot_Master))
+
+
+qg.pca <- qgraph.pca(Peru_Plot_Master.data, factors = 2, rotation = "varimax")
