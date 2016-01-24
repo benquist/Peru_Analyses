@@ -1,32 +1,34 @@
 To DO!
-#0) Add funcitonality to run sampling multiple times
-    # calclulate moments on individual and combined runs, calc confidence intervals
+
 #1.5) add mass-based photosyn and area-based photosyn  
-#2) create table of traits and moments for each site  
   
 ##########################
-Units stuff
+#Units stuff
 
-LMA =  g/m^2
+#LMA =  g/m^2
 
-SLA =  m^2/g
+#SLA =  m^2/g
 
-lamina area = m^2#one of these is wrong, since it doesn't match the reported sla/lma
+#photosynthesis = umol/m^2/s
 
-lamina mass = g# one of these has to be wrong
+#lamina area = m^2#one of these is wrong, since it doesn't match the reported sla/lma
 
-photosyn<-read.csv("data_12192015/photosyn.csv",colClasses = "character")
+#lamina mass = g# one of these has to be wrong
 
-plot(as.numeric(as.character(photosyn$laminapetiole_area))/as.numeric(as.character(photosyn$laminapetiole_drymass))~as.numeric(as.character(photosyn$sla_lamina_petiole)))
+#photosyn<-read.csv("data_12192015/photosyn.csv",colClasses = "character")
+
+#plot(as.numeric(as.character(photosyn$laminapetiole_area))/as.numeric(as.character(photosyn$laminapetiole_drymass))~as.numeric(as.character(photosyn$sla_lamina_petiole)))
 #as per the plot, the units differ by orders of magnitude, but are otherwise identical.  
 #the sla and lma seem to be correct, since they agree with the bien output
-photosynthesis = umol/m^2/s
+
+#photosynthesis = umol/m^2/s
 
 #The reported LMA and SLA values appear to come from a separate project associated with CHAMBASA.  In short, the lma values in the photosyn table were not automatically generated from the other columns directly.  These values of sla and lma come from a student who went through lots of images, judging how good they were, etc.and made corrections using the quality flags in the leaf area columns, and filtering based on those flags. For quality, there is a quality field in that table where "e” = exclude, "c" = caution, and "g" = good.  However, for the purpose of these analyses we may just want to report the LMA distribution using the ‘lma_lamina_petiole’ field as well as just recalculating lma which we can call ‘ma_lamina_petiole_calculated’ where you just divide the lamina dry mass by the lamina area as reported in those separate fields.  Make sense?
 
 #Do we have enough info now to plot out the LMA and photosynthesis distributions across the gradient?
 
 ##########################
+
 #require(private.BRI)
 require(MASS)#Needed for distribution fitting
 require(fitdistrplus)
@@ -516,143 +518,6 @@ rm(occurrences,i,occurrences_i,plot_i,sp_i)
 
 #####################################################
 
-#Now, we just need to draw values according to the trait distributions
-Add code to allow replication of draws!!
-
-plots<-unique(all_fp_trees$plot_code)
-CMass<-list()
-
-for(i in 1:length(plots)){
-plot_i<-as.character(plots[i])
-occurrences_i<-sp_by_plot[sp_by_plot[,1]==plot_i,]
-trait_draws<-NULL
-for(s in 1:length(occurrences_i[,1])){
-sp_s<-occurrences_i[,2][s]
-occ_s<-as.numeric(occurrences_i[,4][s])    
-vals<-output_Leaf_Cmass[which(output_Leaf_Cmass[,1]==plot_i & output_Leaf_Cmass[,2]==sp_s),]
-shape1_s<-as.numeric(vals[3])
-shape2_s<-as.numeric(vals[4])
-
-if(is.na(shape2_s)==FALSE){
-#trait_vals_s<-rnorm(n=occ_s,mean=mean_s,sd = sd_s)
-trait_vals_s<-rbeta(n=occ_s,shape1=shape1_s,shape2 = shape2_s)
-trait_draws<-c(trait_draws,trait_vals_s)
-
-}
-
-if(is.na(shape2_s)==TRUE){
-
-
-trait_vals_s<-matrix(shape1_s,occ_s) 
-trait_draws<-c(trait_draws,trait_vals_s)
-
-}
-
-
-
-}#trait draw for plot i
-CMass[[i]]<-trait_draws
-  
-#add code here to add trait draws to list  
-}#cmass trait draw
-
-rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
-
-#hist(CMass[[3]])
-
-#########################################
-
-#N Mass
-#Now, we just need to draw values according to the trait distributions
-Nmass<-list()
-
-for(i in 1:length(plots)){
-  plot_i<-as.character(plots[i])
-  occurrences_i<-sp_by_plot[sp_by_plot[,1]==plot_i,]
-  trait_draws<-NULL
-  for(s in 1:length(occurrences_i[,1])){
-    sp_s<-occurrences_i[,2][s]
-    occ_s<-as.numeric(occurrences_i[,4][s])    
-    vals<-output_Leaf_Nmass[which(output_Leaf_Nmass[,1]==plot_i & output_Leaf_Nmass[,2]==sp_s),]
-    shape1_s<-as.numeric(vals[3])
-    shape2_s<-as.numeric(vals[4])
-    
-    if(is.na(shape2_s)==FALSE){
-      #trait_vals_s<-rnorm(n=occ_s,mean=mean_s,sd = sd_s)
-      trait_vals_s<-rbeta(n=occ_s,shape1=shape1_s,shape2 = shape2_s)
-      trait_draws<-c(trait_draws,trait_vals_s)
-      
-    }
-    
-    if(is.na(shape2_s)==TRUE){
-      
-      
-      trait_vals_s<-matrix(shape1_s,occ_s) 
-      trait_draws<-c(trait_draws,trait_vals_s)
-      
-    }
-    
-    
-    
-  }#trait draw for plot i
-  Nmass[[i]]<-trait_draws
-  
-  #add code here to add trait draws to list  
-}#Nmass trait draw
-
-rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
-
-#hist(Nmass[[3]])
-
-
-#################################
-
-
-#P Mass
-#Now, we just need to draw values according to the trait distributions
-Pmass<-list()
-
-for(i in 1:length(plots)){
-  plot_i<-as.character(plots[i])
-  occurrences_i<-sp_by_plot[sp_by_plot[,1]==plot_i,]
-  trait_draws<-NULL
-  for(s in 1:length(occurrences_i[,1])){
-    sp_s<-occurrences_i[,2][s]
-    occ_s<-as.numeric(occurrences_i[,4][s])    
-    vals<-output_Leaf_Pmass[which(output_Leaf_Pmass[,1]==plot_i & output_Leaf_Pmass[,2]==sp_s),]
-    shape1_s<-as.numeric(vals[3])
-    shape2_s<-as.numeric(vals[4])
-    
-    if(is.na(shape2_s)==FALSE){
-      #trait_vals_s<-rnorm(n=occ_s,mean=mean_s,sd = sd_s)
-      trait_vals_s<-rbeta(n=occ_s,shape1=shape1_s,shape2 = shape2_s)
-      trait_draws<-c(trait_draws,trait_vals_s)
-      
-    }
-    
-    if(is.na(shape2_s)==TRUE){
-      
-      
-      trait_vals_s<-matrix(shape1_s,occ_s) 
-      trait_draws<-c(trait_draws,trait_vals_s)
-      
-    }
-    
-    
-    
-  }#trait draw for plot i
-  Pmass[[i]]<-trait_draws
-  
-  #add code here to add trait draws to list  
-}#Pmass trait draw
-
-rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
-
-#hist(Pmass[[5]])
-
-#######################################
-
-
 trait_list<-CMass
 plot(density(na.omit(trait_list[[1]])),col="red",ylim=c(0,25),main = "C Mass",xlab="Percent")  
 lines(density(na.omit(trait_list[[2]])),col="orange")  
@@ -699,7 +564,7 @@ lines(density(na.omit(trait_list[[7]])),col="dark blue")
 lines(density(na.omit(trait_list[[8]])),col="violet")  
 lines(density(na.omit(trait_list[[9]])),col="purple")  
 lines(density(na.omit(trait_list[[10]])),col="black")  
-
+rm(trait_list)
 ###############################
 peru_draws_beta_distribution<-function(output_file,nreps){
 plots<-unique(all_fp_trees$plot_code)
@@ -744,12 +609,60 @@ for(i in 1:length(plots)){
 return(draws)
 rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
 }
+###########
+peru_draws_gamma_distribution<-function(output_file,nreps){
+  plots<-unique(all_fp_trees$plot_code)
+  draws<-list()
+  for(i in 1:length(plots)){
+    plot_i<-as.character(plots[i])
+    occurrences_i<-sp_by_plot[sp_by_plot[,1]==plot_i,]
+    trait_draws<-NULL
+    for(s in 1:length(occurrences_i[,1])){
+      sp_s<-occurrences_i[,2][s]
+      occ_s<-as.numeric(occurrences_i[,4][s])    
+      #vals<-output_Leaf_Cmass[which(output_Leaf_Cmass[,1]==plot_i & output_Leaf_Cmass[,2]==sp_s),]
+      vals<-output_file[which(output_file[,1]==plot_i & output_file[,2]==sp_s),]
+      
+      
+      
+      shape_s<-as.numeric(vals[3])
+      rate_s<-as.numeric(vals[4])
+      trait_vals_s<-NULL
+      for(r in 1:nreps){    
+        if(is.na(rate_s)==FALSE){
+          #trait_vals_s<-rnorm(n=occ_s,mean=mean_s,sd = sd_s)
+          trait_vals_r<-rgamma(n=occ_s,shape=shape_s,rate = rate_s)
+          #trait_vals_r<-rgamma(n=occ_s,shape1=shape1_s,shape2 = shape2_s)
+          trait_vals_s<-rbind(trait_vals_s,trait_vals_r)
+          
+        }
+        
+        if(is.na(rate_s)==TRUE){
+          
+          
+          trait_vals_r<-matrix(shape_s,occ_s,nrow=1) 
+          trait_vals_s<-rbind(trait_vals_s,trait_vals_r)
+          
+        }
+        
+        
+        
+      }#trait draw for plot i
+      trait_draws<-cbind(trait_draws,trait_vals_s) 
+      
+    }#s occurrences
+    draws[[i]]<-trait_draws
+    #add code here to add trait draws to list    
+  }#cmass trait draw
+  return(draws)
+  rm(i,occ_s,plot_i,s,shape1_s,shape2_s,sp_s,trait_draws,trait_vals_s,vals)
+}
 
 #########
 cmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Cmass,nreps=1000)
 pmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Pmass,nreps=1000)
 nmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Nmass,nreps=1000)
-
+sla_draws<-peru_draws_gamma_distribution(output_file = output_Leaf_SLA,nreps = 1000)
 
 require(moments)
 peru_draw_analysis<-function(draws_file){
@@ -794,3 +707,141 @@ peru_draw_analysis<-function(draws_file){
 peru_moments_cmass<-peru_draw_analysis(draws_file = cmass_draws)
 peru_moments_pmass<-peru_draw_analysis(draws_file = pmass_draws)
 peru_moments_nmass<-peru_draw_analysis(draws_file = nmass_draws)
+peru_moments_sla<-peru_draw_analysis(draws_file = sla_draws)
+
+##############
+#BIEN photosyn measurements
+#Area-based photosynthesis (Aarea)
+#Mass-based photosynthesis (Amass)
+
+bien_area_photo<-BIEN.trait.trait("Area-based photosynthesis (Aarea)")
+bien_mass_photo<-BIEN.trait.trait("Mass-based photosynthesis (Amass)")
+unique(bien_area_photo$unit) #all in the units "Âµmol.m-2.s-1"
+unique(bien_mass_photo$unit) #all in the units "Âµmol.g-1.s-1"
+
+#Peru photosyn units umol/m^2/s
+#BIEN histogram
+hist(as.numeric(as.character(bien_area_photo$trait_value)))#mean about 10, range about 0-40
+hist(as.numeric(as.character(bien_mass_photo$trait_value)))#mean about .2, range about 0-.7
+
+#need to re-load photosyn since I dropped the relevant columns earlier
+photosyn<-read.csv("data_12192015/photosyn.csv",colClasses = "character")
+hist(as.numeric(as.character(photosyn$photosynthesis))) #peru looks like area-based photo
+
+photosyn_amax<-photosyn[which(photosyn$pm_type=="AMAX"),]
+photosyn_asat<-photosyn[which(photosyn$pm_type=="ASAT"),]
+hist(as.numeric(as.character(photosyn_amax$photosynthesis)))
+hist(as.numeric(as.character(photosyn_asat$photosynthesis)))
+
+
+##########################
+#photosynthesis
+
+#bien_area)photo
+#photosyn_amax
+output_Leaf_photo<-NULL
+for( i in 1:length(sp_by_plot[,1])){
+  sp_i<-sp_by_plot[,2][i]  
+  plot_i<-sp_by_plot[,1][i]
+  genus_i<-strsplit(sp_i,split = " ")[[1]][1]
+  family_i<-sp_by_plot[,3][i]
+  
+  traits_i<-list()
+  #look within plot
+  
+  a_plot_data_sp_i<-photosyn_amax[which(photosyn_amax$plot_code==plot_i & photosyn_amax$fp_species_name==sp_i) ,]
+  traits_i[[1]]<-na.omit(as.matrix(a_plot_data_sp_i$photosynthesis))
+  
+  
+  
+  b_study_data_sp_i<-photosyn_amax[which(photosyn_amax$fp_species_name==sp_i) ,]#neat trick= using "which" prevents NA lines from showing up
+  traits_i[[2]]<-na.omit(as.matrix(b_study_data_sp_i$photosynthesis))
+  
+  
+  c_plot_data_genus_i<-photosyn_amax[which(photosyn_amax$plot_code==plot_i & photosyn_amax$fp_genus_name==genus_i) ,]
+  traits_i[[3]]<-na.omit(as.matrix(c_plot_data_genus_i$photosynthesis))
+  
+  
+  
+  d_study_data_genus_i<-photosyn_amax[which(photosyn_amax$fp_genus_name==genus_i) ,]
+  traits_i[[4]]<-na.omit(as.matrix(d_study_data_genus_i$photosynthesis))
+  
+  
+  e_plot_data_family_i<-photosyn_amax[which(photosyn_amax$plot_code==plot_i & photosyn_amax$fp_family_name==family_i) ,]
+  traits_i[[5]]<-na.omit(as.matrix(e_plot_data_family_i$photosynthesis))
+  
+  f_study_data_family_i<-photosyn_amax[which(photosyn_amax$fp_family_name==family_i) ,]
+  traits_i[[6]]<-na.omit(as.matrix(f_study_data_family_i$photosynthesis))
+  
+  #BIEN bits
+  
+  g_bien_data_sp_i<-bien_traits[which(bien_traits$species==sp_i & bien_traits$trait_name=="Area-based photosynthesis (Aarea)"),]
+  traits_i[[7]]<-na.omit(as.matrix(g_bien_data_sp_i$trait_value))
+  
+  h_bien_data_genus_i<-bien_traits[which(bien_traits$genus==genus_i & bien_traits$trait_name=="Area-based photosynthesis (Aarea)"),]
+  traits_i[[8]]<-na.omit(as.matrix(h_bien_data_genus_i$trait_value))
+  
+  i_bien_data_family_i<-bien_traits[which(bien_traits$family==family_i & bien_traits$trait_name=="Area-based photosynthesis (Aarea)"),]  
+  traits_i[[9]]<-na.omit(as.matrix(i_bien_data_family_i$trait_value))  
+  
+  
+  
+  traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
+  
+  ###
+  if(length(traits_i)>0){
+    traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
+  }
+  
+  if(length(traits_i)>1){
+    #traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
+    print(length(traits_i))
+    #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
+    #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
+    dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "gamma",method="BFGS")
+    shape_i<-dist_i$estimate[1]
+    rate_i<-dist_i$estimate[2]
+    #mean_i<-dist_i$estimate[1]
+    #sd_i<-dist_i$estimate[2]
+    output_Leaf_photo<-rbind(output_Leaf_photo,cbind(plot_i,sp_i,shape_i,rate_i))
+    
+    #calculate
+    
+  }else{#if>1
+    
+    if(length(traits_i)==1){
+      traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
+      #traits_i<-as.data.frame(traits_i)#convert to data frame to allow easier indexing
+      print(length(traits_i[,1]))
+      #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Normal")
+      #dist_i<-fitdistr(x=as.numeric(as.vector(traits_i)),densfun = "Beta",list(shape1=1,shape2=1))
+      #dist_i<-fitdist(data=(as.numeric(as.vector(traits_i))),distr = "beta", method = ("mle"))
+      shape_i<-as.numeric(traits_i[1])
+      rate_i<-NA
+      #mean_i<-dist_i$estimate[1]
+      #sd_i<-dist_i$estimate[2]
+      output_Leaf_photo<-rbind(output_Leaf_SLA,cbind(plot_i,sp_i,shape_i,rate_i))
+      
+      #calculate
+      
+    }#if=1
+  }#else
+  
+  ### 
+  
+  
+  
+}#for loop for fitting distributions
+
+rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
+   g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
+rm(traits_i,sp_i,genus_i,family_i,i,dist_i,shape_i,rate_i,plot_i)
+
+#######
+photosynthesis_draws<-peru_draws_gamma_distribution(output_file = output_Leaf_photo,nreps = 1000)
+
+peru_moments_cmass<-peru_draw_analysis(draws_file = cmass_draws)
+peru_moments_pmass<-peru_draw_analysis(draws_file = pmass_draws)
+peru_moments_nmass<-peru_draw_analysis(draws_file = nmass_draws)
+peru_moments_sla<-peru_draw_analysis(draws_file = sla_draws)
+peru_moments_photosynthesis<-peru_draw_analysis(draws_file = photosynthesis_draws)
