@@ -413,6 +413,7 @@ myplot_NperNPP
 ModelTDTNP <- lm(Elevation..m. ~ PhotosynthesisPerLeafNMean, Peru_Plot_Master.data)
 summary(ModelTDTNP)
 confint(ModelTDTNP)
+
 coef(ModelTDTNP)
 
 multiplot(a1, a2, cols=2)
