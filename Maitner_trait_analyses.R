@@ -820,7 +820,7 @@ for( i in 1:length(sp_by_plot[,1])){
       rate_i<-NA
       #mean_i<-dist_i$estimate[1]
       #sd_i<-dist_i$estimate[2]
-      output_Leaf_photo<-rbind(output_Leaf_SLA,cbind(plot_i,sp_i,shape_i,rate_i))
+      output_Leaf_photo<-rbind(output_Leaf_photo,cbind(plot_i,sp_i,shape_i,rate_i))
       
       #calculate
       
