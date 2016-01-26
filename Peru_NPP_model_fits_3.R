@@ -63,6 +63,14 @@ Peru_Plot_Master.data$PlotNtoPMean <- ((Peru_Plot_Master.data$NMeanMean)/ (Peru_
 #Calculate NPPLeaf/RLeaf - Production per carbon respired
 Peru_Plot_Master.data$NPPLeafperRLeaf <- ((Peru_Plot_Master.data$NPPLeaf)/ (Peru_Plot_Master.data$RLeaf))
 
+#MST prediction
+Peru_Plot_Master.data$MST_AGB1 <- ((Peru_Plot_Master.data$Aboveground_biomass)^0.6)
+
+Peru_Plot_Master.data$MST_GPP1 <- ((Peru_Plot_Master.data$GPP)/(Peru_Plot_Master.data$MST_AGB))
+
+Peru_Plot_Master.data$MST_NPP1 <- ((Peru_Plot_Master.data$NPP)/(Peru_Plot_Master.data$MST_AGB))
+
+
 ### Plotting Functions
 ### Panel Plot - define multiplot function first
 #http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/
@@ -119,7 +127,7 @@ N1 <- myplot_TDTNMean <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., NMeanM
                 position=position_dodge(0.05)) +
   #geom_smooth(method=lm)
   geom_smooth()
-myplot_TDTNMean
+#myplot_TDTNMean
 
 #myplot_TDTNMean <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, NMeanMean)) + geom_point(size = 3, color="red") + geom_errorbar(aes(ymin=NMeanLower, ymax=NMeanUpper), width=.2, position=position_dodge(0.05))
 #myplot_TDTNMean
@@ -140,7 +148,7 @@ N2 <- myplot_TDTNVar <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., NVarian
   #geom_smooth(method=lm)
   geom_smooth()
 
-myplot_TDTNVar
+#myplot_TDTNVar
 
 ModelTDTNVar <- lm(Elevation..m. ~ NVarianceMean, Peru_Plot_Master.data)
 
@@ -155,7 +163,7 @@ N3 <- myplot_TDTSkew <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., NSkewne
                 position=position_dodge(0.05)) +
   #geom_smooth(method=lm)
   geom_smooth()
-myplot_TDTSkew
+#myplot_TDTSkew
 
 ModelTDTNVar <- lm(Elevation..m. ~ NVarianceMean, Peru_Plot_Master.data)
 
@@ -171,7 +179,7 @@ N4 <- myplot_TDTKurtosis <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., NKu
   #geom_smooth(method=lm)
   geom_smooth()
   
-myplot_TDTKurtosis
+#myplot_TDTKurtosis
 
 ModelTDTNVar <- lm(Elevation..m. ~ NVarianceMean, Peru_Plot_Master.data)
 summary(ModelTDTNVar)
@@ -180,6 +188,82 @@ coef(ModelTDTNVar)
 
 # Multipanel plot
 multiplot(N1, N2, N3, N4, cols=2)
+
+
+
+
+### assessing TDT predictions  
+# Nitrogen v Temperature
+theme_set(theme_gray(base_size = 15))
+#theme_set(theme_classic(base_size = 30))
+N1 <- myplot_TDTNMean <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, NMeanMean)) +
+  geom_point(size = 3, color="red") +
+  geom_errorbar(aes(ymin=NMeanLower, ymax=NMeanUpper), width=.2,
+                position=position_dodge(0.05)) +
+  #geom_smooth(method=lm)
+  geom_smooth()
+#myplot_TDTNMean
+
+#myplot_TDTNMean <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, NMeanMean)) + geom_point(size = 3, color="red") + geom_errorbar(aes(ymin=NMeanLower, ymax=NMeanUpper), width=.2, position=position_dodge(0.05))
+#myplot_TDTNMean
+
+
+ModelTDTNMean <- lm(MAinvBT ~ NMeanMean, Peru_Plot_Master.data)
+
+summary(ModelTDTNMean)
+confint(ModelTDTNMean)
+coef(ModelTDTNMean)
+
+
+#Plot Variance
+N2 <- myplot_TDTNVar <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, NVarianceMean)) +
+  geom_point(size = 3, color="red") +
+  geom_errorbar(aes(ymin=NVarianceLower, ymax=NVarianceUpper), width=.2,
+                position=position_dodge(0.05)) +
+  #geom_smooth(method=lm)
+  geom_smooth()
+
+#myplot_TDTNVar
+
+ModelTDTNVar <- lm(MAinvBT ~ NVarianceMean, Peru_Plot_Master.data)
+
+summary(ModelTDTNVar)
+confint(ModelTDTNVar)
+coef(ModelTDTNVar)
+
+#Plot Skewness
+N3 <- myplot_TDTSkew <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, NSkewnessMean)) +
+  geom_point(size = 3, color="red")+
+  geom_errorbar(aes(ymin=NSkewnessLower, ymax=NSkewnessUpper), width=.2,
+                position=position_dodge(0.05)) +
+  #geom_smooth(method=lm)
+  geom_smooth()
+#myplot_TDTSkew
+
+ModelTDTNVar <- lm(MAinvBT ~ NVarianceMean, Peru_Plot_Master.data)
+
+summary(ModelTDTNVar)
+confint(ModelTDTNVar)
+coef(ModelTDTNVar)
+
+#Plot Kurtosis
+N4 <- myplot_TDTKurtosis <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, NKurtosisMean)) +
+  geom_point(size = 3, color="red")+
+  geom_errorbar(aes(ymin=NKurtosisLower, ymax=NKurtosisUpper), width=.2,
+                position=position_dodge(0.05))+
+  #geom_smooth(method=lm)
+  geom_smooth()
+
+#myplot_TDTKurtosis
+
+ModelTDTNVar <- lm(MAinvBT ~ NVarianceMean, Peru_Plot_Master.data)
+summary(ModelTDTNVar)
+confint(ModelTDTNVar)
+coef(ModelTDTNVar)
+
+# Multipanel plot
+multiplot(N1, N2, N3, N4, cols=2)
+
 
   #* shifts in mean and variance with elevation . . . all skewness values are greater than zero indicating that either all plots are shifting or there is asymetric colonization into plots. Also, all plots have postive kurtosis - indicative of strong stabilizing filtering around an optimal value . .  TDT would predict distributions that have more positive kurtosis
 
@@ -193,13 +277,13 @@ P1 <- myplot_TDTPMean <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., PMeanM
                 position=position_dodge(0.05)) +
   #geom_smooth(method=lm)
   geom_smooth()
-myplot_TDTPMean
+#myplot_TDTPMean
 
 myplot_TDTPMean <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, PMeanMean)) +
   geom_point(size = 3, color="red") +
   geom_errorbar(aes(ymin=PMeanLower, ymax=NMeanUpper), width=.2,
                 position=position_dodge(0.05))
-myplot_TDTNMean
+#myplot_TDTNMean
 
 
 ModelTDTNMean <- lm(Elevation..m. ~ NMeanMean, Peru_Plot_Master.data)
@@ -217,7 +301,7 @@ P2 <- myplot_TDTPVar <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., PVarian
   #geom_smooth(method=lm)
   geom_smooth()
 
-myplot_TDTPVar
+#myplot_TDTPVar
 
 ModelTDTPVar <- lm(Elevation..m. ~ PVarianceMean, Peru_Plot_Master.data)
 
@@ -232,7 +316,7 @@ P3 <- myplot_TDTPSkew <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., PSkewn
                 position=position_dodge(0.05)) +
   #geom_smooth(method=lm)
   geom_smooth()
-myplot_TDTPSkew
+#myplot_TDTPSkew
 
 ModelTDTPVar <- lm(Elevation..m. ~ PVarianceMean, Peru_Plot_Master.data)
 
@@ -248,7 +332,7 @@ P4 <- myplot_TDTPKurtosis <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., PK
   #geom_smooth(method=lm)
   geom_smooth()
 
-myplot_TDTPKurtosis
+#myplot_TDTPKurtosis
 
 ModelTDTPVar <- lm(Elevation..m. ~ PVarianceMean, Peru_Plot_Master.data)
 summary(ModelTDTPVar)
@@ -266,7 +350,7 @@ C1 <- myplot_TDTCMean <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., CMeanM
                 position=position_dodge(0.05)) +
   #geom_smooth(method=lm)
   geom_smooth()
-myplot_TDTCMean
+#myplot_TDTCMean
 
 ModelTDTCMean <- lm(Elevation..m. ~ CMeanMean, Peru_Plot_Master.data)
 
@@ -283,7 +367,7 @@ C2 <- myplot_TDTCVar <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., CVarian
   #geom_smooth(method=lm)
   geom_smooth()
 
-myplot_TDTPVar
+#myplot_TDTPVar
 
 ModelTDTCVar <- lm(Elevation..m. ~ CVarianceMean, Peru_Plot_Master.data)
 
@@ -298,7 +382,7 @@ C3 <- myplot_TDTCSkew <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., CSkewn
                 position=position_dodge(0.05)) +
   #geom_smooth(method=lm)
   geom_smooth()
-myplot_TDTCSkew
+#myplot_TDTCSkew
 
 ModelTDTCVar <- lm(Elevation..m. ~ CVarianceMean, Peru_Plot_Master.data)
 
@@ -314,16 +398,18 @@ C4 <- myplot_TDTCKurtosis <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., CK
   #geom_smooth(method=lm)
   geom_smooth()
 
-myplot_TDTCKurtosis
+#myplot_TDTCKurtosis
 
 ModelTDTCVar <- lm(Elevation..m. ~ CVarianceMean, Peru_Plot_Master.data)
 summary(ModelTDTCVar)
 confint(ModelTDTCVar)
 coef(ModelTDTCVar)
 
-## assessing goodness of trait sampling vs. mean of abundant species 1:1?
-
 multiplot(C1, C2, C3, C4, cols=2)
+
+
+
+## assessing goodness of trait sampling vs. mean of abundant species 1:1?
 
 theme_set(theme_gray(base_size = 30))
 #theme_set(theme_classic(base_size = 30))
@@ -332,7 +418,7 @@ myplot_OneToOneN <- ggplot(Peru_Plot_Master.data, aes(mean_n_percent, NMeanMean)
   geom_errorbar(aes(ymin=NMeanLower, ymax=NMeanUpper), width=.2,
                 position=position_dodge(0.05)) +
   geom_smooth(method=lm)
-myplot_OneToOneN
+#myplot_OneToOneN
 
 ModelOneToOneN <- lm(log10(mean_n_percent) ~ log10(NMeanMean), Peru_Plot_Master.data)
 summary(ModelOneToOneN)
@@ -344,7 +430,7 @@ myplot_OneToOneP <- ggplot(Peru_Plot_Master.data, aes(mean_p_percent, PMeanMean)
   geom_errorbar(aes(ymin=PMeanLower, ymax=PMeanUpper), width=.2,
                 position=position_dodge(0.05)) +
   geom_smooth(method=lm)
-myplot_OneToOneP
+#myplot_OneToOneP
 
 ModelOneToOneP <- lm(log10(mean_p_percent) ~ log10(PMeanMean), Peru_Plot_Master.data)
 summary(ModelOneToOneP)
@@ -358,7 +444,7 @@ myplot_OneToOneC <- ggplot(Peru_Plot_Master.data, aes(mean_c_percent, CMeanMean)
   geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
                 position=position_dodge(0.05)) +
   geom_smooth(method=lm)
-myplot_OneToOneC
+#myplot_OneToOneC
 
 ModelOneToOneC <- lm(log10(mean_c_percent) ~ log10(CMeanMean), Peru_Plot_Master.data)
 summary(ModelOneToOneC)
@@ -425,7 +511,7 @@ a1 <- myplot_TDTNP<- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperatu
   #geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
                 #position=position_dodge(0.05)) +
   geom_smooth(method=lm)
-myplot_TDTNP
+#myplot_TDTNP
 
 ModelTDTNP <- lm(Elevation..m. ~ PlotNtoPMean, Peru_Plot_Master.data)
 summary(ModelTDTNP)
@@ -437,28 +523,86 @@ a2 <- myplot_NperNPP<- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.tempera
   #geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
   #position=position_dodge(0.05)) +
   geom_smooth(method=lm)
-myplot_NperNPP
+#myplot_NperNPP
 
 a3 <- myplot_NPvNtoP<- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., PhotosynthesisPerLeafNMean)) +
   geom_point(size = 3, color="red") +
   #geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
   #position=position_dodge(0.05)) +
   geom_smooth(method=lm)
-myplot_NPvNtoP
+#myplot_NPvNtoP
 
 a4 <- myplot_NPvNtoP<- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., mean_photosynthesis)) +
   geom_point(size = 3, color="red") +
+  
   #geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
   #position=position_dodge(0.05)) +
   geom_smooth(method=lm)
-myplot_NPvNtoP
+#myplot_NPvNtoP
 
 multiplot(a1, a2, a3, a4, cols=2)
 
+###
+theme_set(theme_gray(base_size = 10))
+NPP1 <- myplot_NPP<- ggplot(Peru_Plot_Master.data, aes(Aboveground_biomass2,NPP)) +
+  geom_point(size = 3, color="red") +
+  scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  geom_smooth(method=lm) +
+  annotation_logticks() 
+#myplot_NPP
+
+GPP1 <- myplot_GPP<- ggplot(Peru_Plot_Master.data, aes(Aboveground_biomass,GPP)) +
+  geom_point(size = 3, color="red") +
+  scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  geom_smooth(method=lm) +
+  annotation_logticks()
+
+#myplot_GPP
+
+MST_GPP1 <- myplot_MST_GPP1<- ggplot(Peru_Plot_Master.data, aes(MAinvBT,log(MSTGPP))) + 
+  geom_point(size = 3, color="red") +
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  geom_smooth(method=lm)
+#myplot_MST_GPP1
+ModelMST_GPP1 <- lm(MAinvBT ~ log(MSTGPP), Peru_Plot_Master.data)
+summary(ModelMST_GPP1)
+confint(ModelTDTNP)
+coef(ModelTDTNP)
+
+
+MST_NPP1 <- myplot_MST_NPP1<- ggplot(Peru_Plot_Master.data, aes(MAinvBT, MSTNPP)) +
+  geom_point(size = 3, color="red") +
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  geom_smooth(method=lm)
+#myplot_MST_NPP1
+ModelMST_NPP1 <- lm(MAinvBT ~ log(MSTNPP), Peru_Plot_Master.data)
+summary(ModelMST_NPP1)
+confint(ModelMST_NPP1)
+coef(ModelMST_NPP1)
+
+#hist(Peru_Plot_Master.data$MSTNPP)
+
+multiplot(NPP1, GPP1, cols=2)
+multiplot(MST_GPP1, MST_NPP1, cols=2)
 
 
 
-########
+
+
+
+
+
+
+################################################################
+################################################################
 #GPP v Biomass
 
 myplot_GPP <- ggplot(Peru_Plot_Master.data, aes(Aboveground_biomass, GPP)) + geom_point(size = 3) +
