@@ -127,6 +127,10 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 ##### Traits of dominant speies sampled within each plot ########
 ### assessing TDT predictions N, P, C, SLA, Photo -> mean_p_percent, mean_c_percent, mean_n_percent, mean_sla_lamina_petiole, mean_photosynthesis
 ### *** need 95%CIs ****
+
+
+png("Figure_Plot_Traits.png")
+#dev.off()
 T1 <- myplot_TDTNAve <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., mean_n_percent)) +
   xlab("Elevation (m)") + ylab("Plot % Leaf Nitrogen Plot") +
   geom_point(size = 3, color="red") +
@@ -257,14 +261,23 @@ T9 <- myplot_NtoPvNeff <- ggplot(Peru_Plot_Master.data, aes(PlotNtoP, Photosynth
 #huh . . . no correlation. Due to covariation?
 
 multiplot(T1,T2,T3,T4,T5,T6, cols=2)
+dev.off()
+
+
 
 ##################################
 ###### Distributions from subsampled trait distribuitons
 ##################################
+
+
+########################################################
+########################################################
 # Nitrogen 
 #
 ######
 
+png("Figure_Sampled_Nitrogen.png")
+#dev.off()
 theme_set(theme_gray(base_size = 15))
 #theme_set(theme_classic(base_size = 30))
 N1 <- myplot_TDTNMean <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., NMeanMean)) +
@@ -365,10 +378,15 @@ coef(ModelTDTNVar)
 
 # Multipanel plot
 multiplot(N1, N2, N3, N4, cols=2)
+dev.off()
 
 
+
+#####################################
 ### assessing TDT predictions  
 # Nitrogen v Temperature
+
+png("Nitrogen_MST")
 theme_set(theme_gray(base_size = 15))
 #theme_set(theme_classic(base_size = 30))
 N1 <- myplot_TDTNMean <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, NMeanMean)) +
@@ -440,22 +458,124 @@ coef(ModelTDTNVar)
 
 # Multipanel plot
 multiplot(N1, N2, N3, N4, cols=2)
-
+dev.off()
 
   #* shifts in mean and variance with elevation . . . all skewness values are greater than zero indicating that either all plots are shifting or there is asymetric colonization into plots. Also, all plots have postive kurtosis - indicative of strong stabilizing filtering around an optimal value . .  TDT would predict distributions that have more positive kurtosis
 
 
-f
-ModelTDTSLAVar <- lm(Elevation..m. ~ SLAVarianceMean, Peru_Plot_Master.data)
+################################################################
+################################################################
+#### Leaf Carbon
+################
 
-summary(ModelTDTSLAVar)
-confint(ModelTDTSLAVar)
-coef(ModelTDTSLAVar)
+png("Figure_Sampled_Carbon.png")
+theme_set(theme_gray(base_size = 15))
+#theme_set(theme_classic(base_size = 30))
+C1 <- myplot_TDTCMean <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., CMeanMean)) +
+  xlab("Elevation (m)") + ylab("Sampled Mean % Leaf C") +
+  geom_point(size = 3, color="red") +
+  geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
+                position=position_dodge(0.05)) +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  #geom_smooth(method=lm)+
+  geom_smooth()
+#myplot_TDTCMean
+
+#myplot_TDTNMean <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, NMeanMean)) + geom_point(size = 3, color="red") + geom_errorbar(aes(ymin=NMeanLower, ymax=NMeanUpper), width=.2, position=position_dodge(0.05))
+#myplot_TDTNMean
+
+ModelTDTNMean <- lm(Elevation..m. ~ NMeanMean, Peru_Plot_Master.data)
+
+summary(ModelTDTNMean)
+confint(ModelTDTNMean)
+coef(ModelTDTNMean)
+
+
+#Plot Variance
+C2 <- myplot_TDTPVar <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., CVarianceMean)) +
+  xlab("Elevation (m)") + ylab("Sampled Variance % C ") +
+  geom_point(size = 3, color="red") +
+  geom_errorbar(aes(ymin=CVarianceLower, ymax=CVarianceUpper), width=.2,
+                position=position_dodge(0.05)) +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  #geom_smooth(method=lm)+
+  geom_smooth()
+#myplot_TDTCVar
+
+ModelTDTNVar <- lm(Elevation..m. ~ NVarianceMean, Peru_Plot_Master.data)
+
+summary(ModelTDTNVar)
+confint(ModelTDTNVar)
+coef(ModelTDTNVar)
+
+#Plot Skewness
+C3 <- myplot_TDTCSkew <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., CSkewnessMean)) +
+  xlab("Elevation (m)") + ylab("Sampled Skewness % C ") +
+  geom_point(size = 3, color="red") +
+  geom_errorbar(aes(ymin=CSkewnessLower, ymax=CSkewnessUpper), width=.2,
+                position=position_dodge(0.05)) +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  #geom_errorbar(aes(ymin=TransformedNpercentLower, ymax=TransformedNpercentUpper), width=.01,
+  #position=position_dodge(0.05)) +
+  #geom_smooth(method=lm)+
+  geom_smooth()+
+  expand_limits(y=c(-2.5,2.5)) +
+  geom_hline(yintercept = 0)
+#myplot_TDTCSkew 
+
+ModelTDTNVar <- lm(Elevation..m. ~ NVarianceMean, Peru_Plot_Master.data)
+
+summary(ModelTDTNVar)
+confint(ModelTDTNVar)
+coef(ModelTDTNVar)
+
+#Plot Kurtosis
+C4 <- myplot_TDTCKurtosis <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., CKurtosisMean)) +
+  xlab("Elevation (m)") + ylab("Sampled Kurtosis % C ") +
+  geom_point(size = 3, color="red") +
+  geom_errorbar(aes(ymin=CKurtosisLower, ymax=CKurtosisUpper), width=.2,
+                position=position_dodge(0.05)) +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  #geom_errorbar(aes(ymin=TransformedNpercentLower, ymax=TransformedNpercentUpper), width=.01,
+  #position=position_dodge(0.05)) +
+  #geom_smooth(method=lm)+
+  geom_smooth()+ 
+  expand_limits(y=c(-10,30)) +
+  geom_hline(yintercept = 0)
+#myplot_TDTCKurtosis 
+
+
+ModelTDTNVar <- lm(Elevation..m. ~ NVarianceMean, Peru_Plot_Master.data)
+summary(ModelTDTNVar)
+confint(ModelTDTNVar)
+coef(ModelTDTNVar)
+
+# Multipanel plot
+multiplot(C1, C2, C3, C4, cols=2)
+dev.off()
 
 ################################################################
 ################################################################
 #### Leaf Phosphorus
 ################
+
+png("Figure_Sampled_Phosphorus.png")
 theme_set(theme_gray(base_size = 15))
 #theme_set(theme_classic(base_size = 30))
 P1 <- myplot_TDTNMean <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., PMeanMean)) +
@@ -555,11 +675,13 @@ coef(ModelTDTNVar)
 
 # Multipanel plot
 multiplot(P1, P2, P3, P4, cols=2)
+dev.off()
 
 ################
 #### SLA
 ################
 
+png("Figure_Sampled_SLA.png")
 theme_set(theme_gray(base_size = 15))
 
 SLA1 <- myplot_SLANMean <- ggplot(Peru_Plot_Master.data, aes(Elevation..m., SLAMeanMean)) +
@@ -657,7 +779,7 @@ coef(ModelTDTNVar)
 
 # Multipanel plot
 multiplot(SLA1, SLA2, SLA3, SLA4, cols=2)
-
+dev.off()
 
 ##################################
 ## assessing goodness of trait sampling vs. mean of abundant species 1:1?
@@ -678,6 +800,7 @@ TransformedSLALower <- (Peru_Plot_Master.data$SLAMeanLower * 1000)
 TransformedSLAUpper <- (Peru_Plot_Master.data$SLAMeanUpper * 1000)
 
 
+png("SampledvsMeasuredTraitMeans.png")
 p1 <- ggplot(Peru_Plot_Master.data, aes(mean_n_percent, TransformedNpercent)) + 
   xlab("% Nitrogen Subsampling") + ylab("% Nitrogen Plot") +
   geom_point(size = 3, color="red") +
@@ -751,12 +874,15 @@ p5 <- ggplot(Peru_Plot_Master.data, aes(Transformedmean_sla_lamina_petiole, SLAM
 
 
 multiplot(p1, p2, p3, p4, p5, cols=2)
+dev.off()
+
 
 ####################################################
 #############  shift in derived traits N:P and N per Photo
 #N:P and N productivity across elevation  using subsampled trait values
 ###################################################
 
+png("Figure_Stoich_MST.png")
 theme_set(theme_gray(base_size = 10))
 
 a_1 <- myplot_TDTNP<- ggplot(Peru_Plot_Master.data, aes(MAinvBT, PlotNtoPMean)) +
@@ -804,12 +930,13 @@ a_4 <- myplot_TvPhotoMeanMean<- ggplot(Peru_Plot_Master.data, aes(MAinvBT, Photo
 
 
 multiplot(a_1, a_2, a_3, a_4, cols=2)
-
+dev.off()
   #* foliar photosynthesis is largely independent of elevation and temperature. if anything slightly higher at highest elevations
 
 
 ## N:P . . . plotting both values calculated for the abundant species sampled on plot and the species subsampled. So, PlotNtoP is the foliar N:P from plot samples and PlotNtoPMean comes from local and BIEN traits for the rare species. 
 
+png("Figure_StoichMST_2.png")
 b1 <- myplot_NPvElev<- ggplot(Peru_Plot_Master.data, aes(Elevation..m., PlotNtoPMean)) +
   geom_point(size = 3, color="red") +
   #geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
@@ -946,11 +1073,13 @@ confint(ModelPhotoPerLeafPMeanvBTemp)
 coef(ModelPhotoPerLeafPMeanvBTemp)
 
 multiplot(b_1,b_2,b_3,b_4,b_5,b_6, cols=2)
-
+dev.off()
 
 ##############################
 #  Ecosystem measures NPP and GPP
 ###
+
+png("Figure_Ecosystem_MST.png")
 theme_set(theme_gray(base_size = 10))
 NPP1 <- myplot_NPP<- ggplot(Peru_Plot_Master.data, aes(Aboveground_biomass2,NPP)) +
   geom_point(size = 3, color="red") +
@@ -1015,8 +1144,11 @@ coef(ModelMST_GPP1)
 #hist(Peru_Plot_Master.data$MSTNPP)
 
 multiplot(NPP1, GPP1, cols=2)
-multiplot(MST_GPP1, MST_NPP1, cols=2)
+dev.off()
 
+png("Figure_Ecosystem_MST_2.png")
+multiplot(MST_GPP1, MST_NPP1, cols=2)
+dev.off()
 
 
 
@@ -1964,6 +2096,7 @@ C <- Peru_Plot_Master.data$CMeanMean
 SLA <- Peru_Plot_Master.data$SLAMeanMean
 Neff <- Peru_Plot_Master.data$PhotoPerLeafNMean
 
+png("Figure_PCA_Plot_gradient.png")
 chambasapca <- princomp(~ SLA + N + C + P + Photo + NP + Neff, data=Peru_Plot_Master.data, cor=TRUE)
 
 summary(chambasapca)
@@ -1973,7 +2106,7 @@ screeplot(chambasapca)
 chambasapca$scores
 chambasapca$loadings
   #* first two principle components explain about 72% of the variation. 
-
+dev.off()
 
 
 first.component.scores <- chambasapca$scores[,1]
@@ -1994,12 +2127,13 @@ length(elev)
 
 #merge(elev,first.component.scores) 
 
+png("Figure_PCA_gradient_Plot.png")
 PCA1 <- myplot_PCA1vElev<- ggplot(Peru_Plot_Master.data, aes(Mean.annual.air.temperature..degC., PCA1ScoresPlotTraits)) +
   geom_point(size = 3, color="red") +
   #geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
   #position=position_dodge(0.05)) +
   geom_smooth(method=lm)
-myplot_PCA1vElev
+#myplot_PCA1vElev
 
 
 PCA2 <- myplot_PCA2vElev<- ggplot(Peru_Plot_Master.data, aes(Precipitation..mm.yr.1., PCA2ScoresPlotTraits)) +
@@ -2007,10 +2141,11 @@ PCA2 <- myplot_PCA2vElev<- ggplot(Peru_Plot_Master.data, aes(Precipitation..mm.y
   #geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
   #position=position_dodge(0.05)) +
   geom_smooth(method=lm)
-myplot_PCA2vElev
+#myplot_PCA2vElev
+
 
 multiplot(PCA1, PCA2, cols=2)
-
+dev.off()
 #####
 #Best predictors of PCA1 and PCA2 variation, climate?
 
