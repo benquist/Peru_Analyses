@@ -1,7 +1,4 @@
-To DO!
 
-#1.5) add mass-based photosyn and area-based photosyn  
-  
 ##########################
 #Units stuff
 
@@ -110,6 +107,7 @@ sp_by_plot<-unique(cbind(as.character(all_fp_trees$plot_code),as.character(all_f
 
 ##NMass distribution fitting
 output_Leaf_Nmass<-NULL
+output_metadata<-NULL
 for( i in 1:length(sp_by_plot[,1])){
   sp_i<-sp_by_plot[,2][i]  
   plot_i<-sp_by_plot[,1][i]
@@ -152,11 +150,16 @@ for( i in 1:length(sp_by_plot[,1])){
     traits_i[[8]]<-na.omit(as.matrix(h_bien_data_genus_i$trait_value))
  
   i_bien_data_family_i<-bien_traits[which(bien_traits$family==family_i & bien_traits$trait_name=="Leaf Nmass"),]  
-    traits_i[[9]]<-na.omit(as.matrix(i_bien_data_family_i$trait_value))  
+     traits_i[[9]]<-na.omit(as.matrix(i_bien_data_family_i$trait_value))        
+     names(traits_i)<-c("a","b","c","d","e","f","g","h","i")  
   
       
       
   traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
+  
+  level_used<-names(traits_i[1])
+  sample_size<-length(traits_i[[1]])
+  output_metadata<-rbind(output_metadata,cbind(plot_i,sp_i,level_used,sample_size))
   
   if(length(traits_i)>0){
   traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
@@ -196,11 +199,11 @@ for( i in 1:length(sp_by_plot[,1])){
   }#if=1
 }#else
   
-  
+Nmass_fitting_metadata<-output_metadata  
 }#for loop for fitting distributions
 
 rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
-   g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
+   g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i,level_used,output_metadata,plot_i,sample_size)
 rm(traits_i,sp_i,genus_i,family_i,i,dist_i,plots,shape1_i,shape2_i)
 
 ############################################
@@ -208,6 +211,7 @@ rm(traits_i,sp_i,genus_i,family_i,i,dist_i,plots,shape1_i,shape2_i)
 #Next,CMass
 
 output_Leaf_Cmass<-NULL
+output_metadata<-NULL
 for( i in 1:length(sp_by_plot[,1])){
   sp_i<-sp_by_plot[,2][i]  
   plot_i<-sp_by_plot[,1][i]
@@ -252,9 +256,20 @@ for( i in 1:length(sp_by_plot[,1])){
   i_bien_data_family_i<-bien_traits[which(bien_traits$family==family_i & bien_traits$trait_name=="Leaf Cmass"),]  
   traits_i[[9]]<-na.omit(as.matrix(i_bien_data_family_i$trait_value))  
   
+  names(traits_i)<-c("a","b","c","d","e","f","g","h","i")
   
-  
-  traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
+traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data      
+level_used<-names(traits_i[1])   
+
+if(length(traits_i)==0){
+sample_size=0  
+}
+
+if(length(traits_i)>0){
+sample_size<-length(traits_i[[1]])   
+}
+
+output_metadata<-rbind(output_metadata,cbind(plot_i,sp_i,level_used,sample_size))
   
   if(length(traits_i)>0){
     traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
@@ -293,17 +308,19 @@ for( i in 1:length(sp_by_plot[,1])){
       
     }#if=1
   }#else
-  
+Cmass_fitting_metadata<-output_metadata  
+
   
 }#for loop for fitting distributions
 
 rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
    g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
-rm(traits_i,sp_i,genus_i,family_i,i,dist_i,plot_i,shape1_i,shape2_i)
+rm(traits_i,sp_i,genus_i,family_i,i,dist_i,plot_i,shape1_i,shape2_i,level_used,sample_size)
 ##############################################
 #PMass
 
 output_Leaf_Pmass<-NULL
+output_metadata<-NULL
 for( i in 1:length(sp_by_plot[,1])){
   sp_i<-sp_by_plot[,2][i]  
   plot_i<-sp_by_plot[,1][i]
@@ -346,11 +363,18 @@ for( i in 1:length(sp_by_plot[,1])){
   traits_i[[8]]<-na.omit(as.matrix(h_bien_data_genus_i$trait_value))
   
   i_bien_data_family_i<-bien_traits[which(bien_traits$family==family_i & bien_traits$trait_name=="Leaf Pmass"),]  
-  traits_i[[9]]<-na.omit(as.matrix(i_bien_data_family_i$trait_value))  
+   traits_i[[9]]<-na.omit(as.matrix(i_bien_data_family_i$trait_value))        
+   names(traits_i)<-c("a","b","c","d","e","f","g","h","i")  
   
   
   
-  traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
+traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data      
+level_used<-names(traits_i[1])   
+if(length(traits_i)==0){ sample_size=0   }  
+
+if(length(traits_i)>0){ sample_size<-length(traits_i[[1]])    }
+
+output_metadata<-rbind(output_metadata,cbind(plot_i,sp_i,level_used,sample_size))
   
   if(length(traits_i)>0){
     traits_i<-as.matrix(traits_i[[1]])#pulls out the highest ranking level of traits
@@ -389,18 +413,20 @@ for( i in 1:length(sp_by_plot[,1])){
       
     }#if=1
   }#else
-  
+Pmass_fitting_metadata<-output_metadata  
+
   
 }#for loop for fitting distributions
 
 rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
    g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
-rm(traits_i,sp_i,genus_i,family_i,i,dist_i,plot_i,shape1_i,shape2_i)
+rm(traits_i,sp_i,genus_i,family_i,i,dist_i,plot_i,shape1_i,shape2_i,level_used,sample_size)
 
 #############################################
 #photosyn$sla_lamina_petiole
 
 output_Leaf_SLA<-NULL
+output_metadata<-NULL
 for( i in 1:length(sp_by_plot[,1])){
   sp_i<-sp_by_plot[,2][i]  
   plot_i<-sp_by_plot[,1][i]
@@ -443,11 +469,16 @@ for( i in 1:length(sp_by_plot[,1])){
   traits_i[[8]]<-na.omit(as.matrix(h_bien_data_genus_i$trait_value))
   
   i_bien_data_family_i<-bien_traits[which(bien_traits$family==family_i & bien_traits$trait_name=="Specific leaf area (SLA)"),]  
-  traits_i[[9]]<-na.omit(as.matrix(i_bien_data_family_i$trait_value))  
+   traits_i[[9]]<-na.omit(as.matrix(i_bien_data_family_i$trait_value))        
+   names(traits_i)<-c("a","b","c","d","e","f","g","h","i")  
   
   
   
-  traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
+traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data      
+level_used<-names(traits_i[1])   
+if(length(traits_i)==0){ sample_size=0   }  
+if(length(traits_i)>0){ sample_size<-length(traits_i[[1]])    }
+output_metadata<-rbind(output_metadata,cbind(plot_i,sp_i,level_used,sample_size))
  
   ###
   if(length(traits_i)>0){
@@ -489,14 +520,15 @@ for( i in 1:length(sp_by_plot[,1])){
   }#else
   
   ### 
-  
+sla_fitting_metadata<-output_metadata  
+
   
   
 }#for loop for fitting distributions
 
 rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
    g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
-rm(traits_i,sp_i,genus_i,family_i,i,dist_i,shape_i,rate_i,plot_i)
+rm(traits_i,sp_i,genus_i,family_i,i,dist_i,shape_i,rate_i,plot_i,level_used,sample_size)
 
 
 
@@ -665,6 +697,8 @@ nmass_draws<-peru_draws_beta_distribution(output_file = output_Leaf_Nmass,nreps=
 sla_draws<-peru_draws_gamma_distribution(output_file = output_Leaf_SLA,nreps = 1000)
 
 require(moments)
+plots<-unique(all_fp_trees$plot_code)
+
 peru_draw_analysis<-function(draws_file){
   output<-NULL
   for(i in 1:length(draws_file)){
@@ -740,6 +774,7 @@ hist(as.numeric(as.character(photosyn_asat$photosynthesis)))
 #bien_area)photo
 #photosyn_amax
 output_Leaf_photo<-NULL
+output_metadata<-NULL
 for( i in 1:length(sp_by_plot[,1])){
   sp_i<-sp_by_plot[,2][i]  
   plot_i<-sp_by_plot[,1][i]
@@ -782,11 +817,16 @@ for( i in 1:length(sp_by_plot[,1])){
   traits_i[[8]]<-na.omit(as.matrix(h_bien_data_genus_i$trait_value))
   
   i_bien_data_family_i<-bien_traits[which(bien_traits$family==family_i & bien_traits$trait_name=="Area-based photosynthesis (Aarea)"),]  
-  traits_i[[9]]<-na.omit(as.matrix(i_bien_data_family_i$trait_value))  
+   traits_i[[9]]<-na.omit(as.matrix(i_bien_data_family_i$trait_value))        
+   names(traits_i)<-c("a","b","c","d","e","f","g","h","i")  
   
   
   
-  traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data
+traits_i<-traits_i[which(lengths(traits_i)>0)]#prunes list down to hierarchical levels with data      
+level_used<-names(traits_i[1])   
+if(length(traits_i)==0){ sample_size=0   }  
+if(length(traits_i)>0){ sample_size<-length(traits_i[[1]])    }
+output_metadata<-rbind(output_metadata,cbind(plot_i,sp_i,level_used,sample_size))
   
   ###
   if(length(traits_i)>0){
@@ -829,13 +869,14 @@ for( i in 1:length(sp_by_plot[,1])){
   
   ### 
   
-  
+photosynthesis_fitting_metadata<-output_metadata  
+
   
 }#for loop for fitting distributions
 
 rm(a_plot_data_sp_i,b_study_data_sp_i,c_plot_data_genus_i,d_study_data_genus_i,e_plot_data_family_i,f_study_data_family_i,
    g_bien_data_sp_i,h_bien_data_genus_i,i_bien_data_family_i)
-rm(traits_i,sp_i,genus_i,family_i,i,dist_i,shape_i,rate_i,plot_i)
+rm(traits_i,sp_i,genus_i,family_i,i,dist_i,shape_i,rate_i,plot_i,level_used,sample_size)
 
 #######
 photosynthesis_draws<-peru_draws_gamma_distribution(output_file = output_Leaf_photo,nreps = 1000)
@@ -845,3 +886,134 @@ peru_moments_pmass<-peru_draw_analysis(draws_file = pmass_draws)
 peru_moments_nmass<-peru_draw_analysis(draws_file = nmass_draws)
 peru_moments_sla<-peru_draw_analysis(draws_file = sla_draws)
 peru_moments_photosynthesis<-peru_draw_analysis(draws_file = photosynthesis_draws)
+
+#######
+#save(pmass_draws,file = "pmass_draws")
+#save(cmass_draws,file = "cmass_draws")
+#save(nmass_draws,file = "nmass_draws")
+#save(photosynthesis_draws,file = "photosynthesis_draws")
+#save(sla_draws,file = "sla_draws")
+
+#write.csv(peru_moments_photosynthesis,"peru_moments_photosynthesis.csv")
+#write.csv(peru_moments_sla,"peru_moments_sla.csv")
+#write.csv(peru_moments_nmass,"peru_moments_nmass.csv")
+#write.csv(peru_moments_pmass,"peru_moments_pmass.csv")
+#write.csv(peru_moments_cmass,"peru_moments_cmass.csv")
+
+#write.csv(Cmass_fitting_metadata,"Cmass_fitting_metadata.csv")
+#write.csv(Nmass_fitting_metadata,"Nmass_fitting_metadata.csv")
+#write.csv(Pmass_fitting_metadata,"Pmass_fitting_metadata.csv")
+#write.csv(sla_fitting_metadata,"sla_fitting_metadata.csv")
+#write.csv(photosynthesis_fitting_metadata,"photosynthesis_fitting_metadata.csv")
+#a_plot_data_sp_i
+#b_study_data_sp_i
+#c_plot_data_genus_i
+#d_study_data_genus_i
+#e_plot_data_family_i
+#f_study_data_family_i
+#g_bien_data_sp_i
+#h_bien_data_genus_i
+#i_bien_data_family_i
+
+
+load("pmass_draws")
+load("cmass_draws")
+load("nmass_draws")
+load("sla_draws")
+load("photosynthesis_draws")
+
+peru_moments_cmass<-read.csv("peru_moments_cmass.csv")
+peru_moments_nmass<-read.csv("peru_moments_nmass.csv")
+peru_moments_pmass<-read.csv("peru_moments_pmass.csv")
+peru_moments_photosynthesis<-read.csv("peru_moments_photosynthesis.csv")
+peru_moments_sla<-read.csv("peru_moments_sla.csv")
+#######
+#stuff to add
+
+#1) it would be great to have a multi panel plot showing the continuous distributions 
+#for each of the traits across the gradient.
+
+#2) for each plot we will need metrics including :  
+    #total number of species, 
+    #total number of species with locally measures within plot traits,  
+    #number of species with substituted traits (coming from somewhere on the gradient, and 
+    #number of species with a BIEN trait, and number of species with a genus and family trait mean).  In short some sort of measure of how much filling was done.
+    #number of species without data or where dist. couldn't be fit
+
+
+#####
+
+
+#PLot order:
+#plot_code	Elevation (m)
+#TAM-06	215 1
+#TAM-05	223 2
+#PAN-02	595 3
+#PAN-03	859 4
+#SPD-02	1494  5
+#SPD-01	1713  6
+#TRU-04	2719  7
+#ESP-01	2868  8
+#WAY-01	3045  9
+#ACJ-01	3537  10
+
+#[Order in lists]:plot:order in increasing elevation
+#[1] "SPD-01" 6
+#[2] "TAM-06" 1
+#[3] "ACJ-01" 10
+#[4] "ESP-01" 8
+#[5] "PAN-02" 3
+#[6] "PAN-03" 4
+#[7] "SPD-02" 5
+#[8] "TRU-04" 7
+#[9] "WAY-01" 9
+#[10] "TAM-05"  2
+
+
+trait_list<-cmass_draws
+plot(density(na.omit(as.vector(trait_list[[2]]))),col="red",ylim=c(0,25),main = "Carbon",xlab="Percent")  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col="orange")  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col="yellow")  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col="light green")  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col="dark green")  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col="light blue")  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col="dark blue")  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col="violet")  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col="purple")  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col="black")  
+
+trait_list<-pmass_draws
+plot(density(na.omit(as.vector(trait_list[[2]]))),col="red",ylim=c(0,1800),main = "Phosphorous",xlab="Percent")  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col="orange")  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col="yellow")  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col="light green")  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col="dark green")  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col="light blue")  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col="dark blue")  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col="violet")  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col="purple")  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col="black")  
+
+trait_list<-nmass_draws
+plot(density(na.omit(as.vector(trait_list[[2]]))),col="red",ylim=c(0,180),main = "Nitrogen",xlab="Percent")  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col="orange")  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col="yellow")  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col="light green")  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col="dark green")  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col="light blue")  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col="dark blue")  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col="violet")  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col="purple")  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col="black")  
+
+trait_list<-sla_draws
+plot(density(na.omit(as.vector(trait_list[[2]]))),col="red",ylim=c(0,.5),main = "SLA",xlab="m^2/kg")  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col="orange")  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col="yellow")  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col="light green")  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col="dark green")  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col="light blue")  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col="dark blue")  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col="violet")  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col="purple")  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col="black") 
