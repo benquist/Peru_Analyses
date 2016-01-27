@@ -92,6 +92,7 @@ rm(i)
 
 photosyn$sla_lamina_petiole<-(as.numeric(as.character(photosyn$sla_lamina_petiole))*1000)
 photosyn$lma_lamina_petiole<-(as.numeric(as.character(photosyn$lma_lamina_petiole))/1000)
+photosyn_cnpsla<-photosyn
 
 ########
 
@@ -970,50 +971,162 @@ peru_moments_sla<-read.csv("peru_moments_sla.csv")
 #[10] "TAM-05"  2
 
 
-trait_list<-cmass_draws
-plot(density(na.omit(as.vector(trait_list[[2]]))),col="red",ylim=c(0,25),main = "Carbon",xlab="Percent")  
-lines(density(na.omit(as.vector(trait_list[[10]]))),col="orange")  
-lines(density(na.omit(as.vector(trait_list[[5]]))),col="yellow")  
-lines(density(na.omit(as.vector(trait_list[[6]]))),col="light green")  
-lines(density(na.omit(as.vector(trait_list[[7]]))),col="dark green")  
-lines(density(na.omit(as.vector(trait_list[[1]]))),col="light blue")  
-lines(density(na.omit(as.vector(trait_list[[8]]))),col="dark blue")  
-lines(density(na.omit(as.vector(trait_list[[4]]))),col="violet")  
-lines(density(na.omit(as.vector(trait_list[[9]]))),col="purple")  
-lines(density(na.omit(as.vector(trait_list[[3]]))),col="black")  
+#add
 
-trait_list<-pmass_draws
-plot(density(na.omit(as.vector(trait_list[[2]]))),col="red",ylim=c(0,1800),main = "Phosphorous",xlab="Percent")  
-lines(density(na.omit(as.vector(trait_list[[10]]))),col="orange")  
-lines(density(na.omit(as.vector(trait_list[[5]]))),col="yellow")  
-lines(density(na.omit(as.vector(trait_list[[6]]))),col="light green")  
-lines(density(na.omit(as.vector(trait_list[[7]]))),col="dark green")  
-lines(density(na.omit(as.vector(trait_list[[1]]))),col="light blue")  
-lines(density(na.omit(as.vector(trait_list[[8]]))),col="dark blue")  
-lines(density(na.omit(as.vector(trait_list[[4]]))),col="violet")  
-lines(density(na.omit(as.vector(trait_list[[9]]))),col="purple")  
-lines(density(na.omit(as.vector(trait_list[[3]]))),col="black")  
+require(grDevices)
+colfunc <- colorRampPalette(c("red", "blue"))
+colors_for_plots<-colfunc(10)
+
+
+trait_list<-cmass_draws
+max_value<-max(na.omit(as.numeric(as.character(photosyn$c_percent))))
+min_value<-min(na.omit(as.numeric(as.character(photosyn$c_percent))))
+lwd=2
+dev.new(width=5, height=4)
+plot(density(na.omit(as.vector(trait_list[[2]][which(trait_list[[2]]>min_value &  trait_list[[2]]<min_value)]))),col=colors_for_plots[1],ylim=c(0,25),xlim=c(0.35,0.6),main = "Carbon",xlab="Percent",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+
+legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
+  "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
+ "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
+  ),lwd=lwd)
 
 trait_list<-nmass_draws
-plot(density(na.omit(as.vector(trait_list[[2]]))),col="red",ylim=c(0,180),main = "Nitrogen",xlab="Percent")  
-lines(density(na.omit(as.vector(trait_list[[10]]))),col="orange")  
-lines(density(na.omit(as.vector(trait_list[[5]]))),col="yellow")  
-lines(density(na.omit(as.vector(trait_list[[6]]))),col="light green")  
-lines(density(na.omit(as.vector(trait_list[[7]]))),col="dark green")  
-lines(density(na.omit(as.vector(trait_list[[1]]))),col="light blue")  
-lines(density(na.omit(as.vector(trait_list[[8]]))),col="dark blue")  
-lines(density(na.omit(as.vector(trait_list[[4]]))),col="violet")  
-lines(density(na.omit(as.vector(trait_list[[9]]))),col="purple")  
-lines(density(na.omit(as.vector(trait_list[[3]]))),col="black")  
+lwd=2
+dev.new(width=5, height=4)
+plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],ylim=c(0,180),xlim=c(0,.05),main = "Nitrogen",xlab="Percent",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+
+legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
+  "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
+  "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
+),lwd=lwd)
+
+
+trait_list<-pmass_draws
+lwd=2
+dev.new(width=5, height=4)
+plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],ylim=c(0,1800),xlim=c(0,.004),main = "Phosphorus",xlab="Percent",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+
+legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
+  "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
+  "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
+),lwd=lwd)
 
 trait_list<-sla_draws
-plot(density(na.omit(as.vector(trait_list[[2]]))),col="red",ylim=c(0,.5),main = "SLA",xlab="m^2/kg")  
-lines(density(na.omit(as.vector(trait_list[[10]]))),col="orange")  
-lines(density(na.omit(as.vector(trait_list[[5]]))),col="yellow")  
-lines(density(na.omit(as.vector(trait_list[[6]]))),col="light green")  
-lines(density(na.omit(as.vector(trait_list[[7]]))),col="dark green")  
-lines(density(na.omit(as.vector(trait_list[[1]]))),col="light blue")  
-lines(density(na.omit(as.vector(trait_list[[8]]))),col="dark blue")  
-lines(density(na.omit(as.vector(trait_list[[4]]))),col="violet")  
-lines(density(na.omit(as.vector(trait_list[[9]]))),col="purple")  
-lines(density(na.omit(as.vector(trait_list[[3]]))),col="black") 
+lwd=2
+dev.new(width=5, height=4)
+plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],xlim=c(0,30),ylim=c(0,.5),main = "SLA",xlab="m^2/g",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+#lines(density(na.omit(as.vector(trait_list[[9]][which(trait_list[[9]]<200)]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+
+legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
+  "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
+  "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
+),lwd=lwd)
+
+####
+#photosyn_cnpsla use for c,n,p,sla
+#photosun_amax use for amax
+
+outlier_trimmer<-function(draws_file,min,max){
+for(i in 1:length(draws_file)){
+draws_file[[i]][which(draws_file[[i]]>max )]<-max
+draws_file[[i]][which(draws_file[[i]]<min )]<-min
+}#i loop
+rm(i)
+return(draws_file)
+}#edit fx
+
+#cmass-remove outliers
+cmass_max<-max(na.omit(photosyn_cnpsla$c_percent))  
+cmass_min<-min(na.omit(photosyn_cnpsla$c_percent))
+cmass_draws_edited<-outlier_trimmer(draws_file = cmass_draws,min = cmass_min,max = cmass_max)
+peru_moments_cmass_edited<-peru_draw_analysis(draws_file = cmass_draws_edited)
+
+#nmass-remove outliers
+nmass_max<-max(na.omit(photosyn_cnpsla$n_percent))  
+nmass_min<-min(na.omit(photosyn_cnpsla$n_percent))
+nmass_draws_edited<-outlier_trimmer(draws_file = nmass_draws,min = nmass_min,max = nmass_max)
+peru_moments_nmass_edited<-peru_draw_analysis(draws_file = nmass_draws_edited)
+
+#pmass-remove outliers
+pmass_max<-max(na.omit(photosyn_cnpsla$p_corrected_percent))  
+pmass_min<-min(na.omit(photosyn_cnpsla$p_corrected_percent))
+pmass_draws_edited<-outlier_trimmer(draws_file = pmass_draws,min = pmass_min,max = pmass_max)
+peru_moments_pmass_edited<-peru_draw_analysis(draws_file = pmass_draws_edited)
+
+#sla-remove outliers
+sla_max<-max(na.omit(photosyn_cnpsla$sla_lamina_petiole))  
+sla_min<-min(na.omit(photosyn_cnpsla$sla_lamina_petiole))
+sla_draws_edited<-outlier_trimmer(draws_file = sla_draws,min = sla_min,max = sla_max)
+peru_moments_sla_edited<-peru_draw_analysis(draws_file = sla_draws_edited)
+
+#photosynthesis-remove outliers
+photosynthesis_max<-as.numeric(max(na.omit(photosyn_amax$photosynthesis)))  
+photosynthesis_min<-as.numeric(min(na.omit(photosyn_amax$photosynthesis)))
+photosynthesis_draws_edited<-outlier_trimmer(draws_file = photosynthesis_draws,min = photosynthesis_min,max = photosynthesis_max)
+peru_moments_photosynthesis_edited<-peru_draw_analysis(draws_file = photosynthesis_draws_edited)
+
+#write.csv(peru_moments_photosynthesis_edited,"peru_moments_photosynthesis_edited.csv")
+#write.csv(peru_moments_sla_edited,"peru_moments_sla_edited.csv")
+#write.csv(peru_moments_nmass_edited,"peru_moments_nmass_edited.csv")
+#write.csv(peru_moments_pmass_edited,"peru_moments_pmass_edited.csv")
+#write.csv(peru_moments_cmass_edited,"peru_moments_cmass_edited.csv")
+
+
+
+
+############
+trait_list<-sla_draws_edited
+lwd=2
+dev.new(width=5, height=4)
+plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],xlim=c(0,30),ylim=c(0,.35),main = "SLA",xlab="m^2/g",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+#lines(density(na.omit(as.vector(trait_list[[9]][which(trait_list[[9]]<200)]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+
+legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
+  "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
+  "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
+),lwd=lwd)
