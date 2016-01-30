@@ -1130,3 +1130,12 @@ legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c
   "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
   "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
 ),lwd=lwd)
+
+
+####################
+
+
+#What we need
+
+#for each trait, across all plots, how much of the data is from level a,b,c,d,e,etc
+#for each trait and each plot, how many of the values exceeded the min, max?
