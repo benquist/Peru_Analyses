@@ -1096,8 +1096,8 @@ sla_draws_edited<-outlier_trimmer(draws_file = sla_draws,min = sla_min,max = sla
 peru_moments_sla_edited<-peru_draw_analysis(draws_file = sla_draws_edited)
 
 #photosynthesis-remove outliers
-photosynthesis_max<-as.numeric(max(na.omit(photosyn_amax$photosynthesis)))  
-photosynthesis_min<-as.numeric(min(na.omit(photosyn_amax$photosynthesis)))
+photosynthesis_max<-as.numeric(max(na.omit(as.numeric(as.character(photosyn_amax$photosynthesis)))))  
+photosynthesis_min<-as.numeric(min(na.omit(as.numeric(as.character(photosyn_amax$photosynthesis)))))
 photosynthesis_draws_edited<-outlier_trimmer(draws_file = photosynthesis_draws,min = photosynthesis_min,max = photosynthesis_max)
 peru_moments_photosynthesis_edited<-peru_draw_analysis(draws_file = photosynthesis_draws_edited)
 
@@ -1132,10 +1132,93 @@ legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c
 ),lwd=lwd)
 
 
+
+
+trait_list<-cmass_draws_edited
+lwd=2
+dev.new(width=5, height=4)
+plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],xlim=c(.35,.75),ylim=c(0,30),main = "Carbon",xlab="Percent",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+
+legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
+  "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
+  "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
+),lwd=lwd)
+
+trait_list<-nmass_draws_edited
+lwd=2
+dev.new(width=5, height=4)
+plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],ylim=c(0,190),xlim=c(0,.05),main = "Nitrogen",xlab="Percent",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+
+legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
+  "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
+  "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
+),lwd=lwd)
+
+
+trait_list<-pmass_draws_edited
+lwd=2
+dev.new(width=5, height=4)
+plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],ylim=c(0,1800),xlim=c(0,.004),main = "Phosphorus",xlab="Percent",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+
+legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
+  "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
+  "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
+),lwd=lwd)
+
+
+trait_list<-photosynthesis_draws_edited
+lwd=2
+dev.new(width=5, height=4)
+plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],ylim=c(0,.11),main = "Photosynthesis",xlab="umol/m^2/s",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+
+legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
+  "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
+  "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
+),lwd=lwd)
+
+
 ####################
 
 
 #What we need
+#edited_plots
 
 #for each trait, across all plots, how much of the data is from level a,b,c,d,e,etc
 #for each trait and each plot, how many of the values exceeded the min, max?
+#re-do analyses in a more rudimentary value: 
