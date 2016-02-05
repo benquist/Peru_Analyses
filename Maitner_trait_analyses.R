@@ -1281,7 +1281,7 @@ outlier_counts$too_small<-as.numeric(as.character(outlier_counts$too_small))
 outlier_counts$too_large<-as.numeric(as.character(outlier_counts$too_large))
 outlier_counts_fraction<-cbind(outlier_counts$V1,outlier_counts[,2:3]/length(unlist(cmass_draws)))
 names(outlier_counts_fraction)[1]<-"Trait"
-write.csv(x = outlier_counts_fraction,file = "fraction_of_outliers_edited.csv")
+#write.csv(x = outlier_counts_fraction,file = "fraction_of_outliers_edited.csv")
 
 
 
