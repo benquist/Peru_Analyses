@@ -1107,9 +1107,11 @@ peru_moments_photosynthesis_edited<-peru_draw_analysis(draws_file = photosynthes
 #write.csv(peru_moments_pmass_edited,"peru_moments_pmass_edited.csv")
 #write.csv(peru_moments_cmass_edited,"peru_moments_cmass_edited.csv")
 
-
-
-
+#save(cmass_draws_edited,file="cmass_draws_edited")
+#save(sla_draws_edited,file="sla_draws_edited")
+#save(pmass_draws_edited,file="pmass_draws_edited")
+#save(nmass_draws_edited,file="nmass_draws_edited")
+#save(photosynthesis_draws_edited,file="photosynthesis_draws_edited")
 ############
 trait_list<-sla_draws_edited
 lwd=2
@@ -1236,7 +1238,7 @@ out_hier<-rbind(out_hier,cbind(level_used,n))
 out_hier[9,]
 n<-length(which(is.na(combined_meta$level_used)==TRUE))
 out_hier[9,]<-c("NA",n)
-write.csv(out_hier,file = "hierarchy_level_used_all_traits.csv")
+#write.csv(out_hier,file = "hierarchy_level_used_all_traits.csv")
 
 #for each trait and each plot, how many of the values exceeded the min, max?
 
@@ -1286,3 +1288,25 @@ names(outlier_counts_fraction)[1]<-"Trait"
 
 
 #re-do analyses in a more rudimentary value? 
+
+
+######################
+read.csv("photosynthesis_draws")
+trait_list<-photosynthesis_draws_edited
+lwd=2
+dev.new(width=5, height=4)
+plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],ylim=c(0,.11),main = "Photosynthesis",xlab="umol/m^2/s",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+
+legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
+  "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
+  "SPD-02:1494m","PAN-03:859m","PAN-02:595m","TAM-05:223m","TAM-06:215m"
+),lwd=lwd)
