@@ -1240,4 +1240,46 @@ write.csv(out_hier,file = "hierarchy_level_used_all_traits.csv")
 
 #for each trait and each plot, how many of the values exceeded the min, max?
 
+
+outlier_counter<-function(draws_file,min,max){
+    too_large<-length(which(unlist(draws_file)>max ))
+    too_small<-length(which(unlist(draws_file)<min ))
+  output<-cbind(too_small,too_large)
+  return(output)
+}#count fx
+
+#cmass-count outliers
+cmass_max<-max(na.omit(photosyn_cnpsla$c_percent))  
+cmass_min<-min(na.omit(photosyn_cnpsla$c_percent))
+cmass_outliers<-outlier_counter(draws_file = cmass_draws,min = cmass_min,max = cmass_max)
+
+#nmass-count outliers
+nmass_max<-max(na.omit(photosyn_cnpsla$n_percent))  
+nmass_min<-min(na.omit(photosyn_cnpsla$n_percent))
+nmass_outliers<-outlier_counter(draws_file = nmass_draws,min = nmass_min,max = nmass_max)
+
+#pmass-count outliers
+pmass_max<-max(na.omit(photosyn_cnpsla$p_corrected_percent))  
+pmass_min<-min(na.omit(photosyn_cnpsla$p_corrected_percent))
+pmass_outliers<-outlier_counter(draws_file = pmass_draws,min = pmass_min,max = pmass_max)
+
+#sla-count outliers
+sla_max<-max(na.omit(photosyn_cnpsla$sla_lamina_petiole))  
+sla_min<-min(na.omit(photosyn_cnpsla$sla_lamina_petiole))
+sla_outliers<-outlier_counter(draws_file = sla_draws,min = sla_min,max = sla_max)
+
+#photosynthesis-count outliers
+photosynthesis_max<-as.numeric(max(na.omit(as.numeric(as.character(photosyn_amax$photosynthesis)))))  
+photosynthesis_min<-as.numeric(min(na.omit(as.numeric(as.character(photosyn_amax$photosynthesis)))))
+photosynthesis_outliers<-outlier_counter(draws_file = photosynthesis_draws,min = photosynthesis_min,max = photosynthesis_max)
+
+#outlier_counts
+
+outlier_counts<-rbind(cbind("carbon",cmass_outliers),cbind("Nitrogen",nmass_outliers),cbind("Phosphorus",pmass_outliers),cbind("SLA",sla_outliers),cbind("Photosynthesis",photosynthesis_outliers))
+outlier_counts<-as.data.frame(outlier_counts)
+outlier_counts$too_small<-as.numeric(as.character(outlier_counts$too_small))
+outlier_counts$too_large<-as.numeric(as.character(outlier_counts$too_large))
+outlier_counts_fraction<-cbind(outlier_counts$V1,outlier_counts[,2:3]/length(unlist(cmass_draws)))
+
+
 #re-do analyses in a more rudimentary value? 
