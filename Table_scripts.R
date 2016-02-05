@@ -154,6 +154,7 @@ linear.4 <- lm(log10(GPP_estimated) ~ log10(Aboveground_biomass2) + MAinvBT, dat
 linear.5 <- lm(log10(NPP) ~ log10(Aboveground_biomass2) + PlotNtoP, data=Peru_Plot_Master.data)
 linear.6 <- lm(log10(GPP_estimated) ~ log10(Aboveground_biomass2) + PlotNtoP, data=Peru_Plot_Master.data)
 
+
 table5 <- stargazer(linear.1, linear.2, linear.3, linear.4, linear.5,linear.6, type="html", 
                     title="Metabolic Scaling Theory - Ecosystem NPP and GPP scaling", 
                     single.row=FALSE, ci=TRUE,ci.level=0.95, 
