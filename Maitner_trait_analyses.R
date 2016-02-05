@@ -144,7 +144,7 @@ for( i in 1:length(sp_by_plot[,1])){
   
   #BIEN bits need work
   
-  g_bien_data_sp_i<-bien_traits[which(bien_traits$species==sp_i & bien_traits$trait_name=="Leaf Nmass"),]
+  g_bien_data_sp_i<-bien_traits[which(bien_traits$taxon==sp_i & bien_traits$trait_name=="Leaf Nmass"),]
     traits_i[[7]]<-na.omit(as.matrix(g_bien_data_sp_i$trait_value))
  
   h_bien_data_genus_i<-bien_traits[which(bien_traits$genus==genus_i & bien_traits$trait_name=="Leaf Nmass"),]
@@ -248,7 +248,7 @@ for( i in 1:length(sp_by_plot[,1])){
   
   #BIEN bits need work
   
-  g_bien_data_sp_i<-bien_traits[which(bien_traits$species==sp_i & bien_traits$trait_name=="Leaf Cmass"),]
+  g_bien_data_sp_i<-bien_traits[which(bien_traits$taxon==sp_i & bien_traits$trait_name=="Leaf Cmass"),]
   traits_i[[7]]<-na.omit(as.matrix(g_bien_data_sp_i$trait_value))
   
   h_bien_data_genus_i<-bien_traits[which(bien_traits$genus==genus_i & bien_traits$trait_name=="Leaf Cmass"),]
@@ -357,7 +357,7 @@ for( i in 1:length(sp_by_plot[,1])){
   
   #BIEN bits need work
   
-  g_bien_data_sp_i<-bien_traits[which(bien_traits$species==sp_i & bien_traits$trait_name=="Leaf Pmass"),]
+  g_bien_data_sp_i<-bien_traits[which(bien_traits$taxon==sp_i & bien_traits$trait_name=="Leaf Pmass"),]
   traits_i[[7]]<-na.omit(as.matrix(g_bien_data_sp_i$trait_value))
   
   h_bien_data_genus_i<-bien_traits[which(bien_traits$genus==genus_i & bien_traits$trait_name=="Leaf Pmass"),]
@@ -463,7 +463,7 @@ for( i in 1:length(sp_by_plot[,1])){
   
   #BIEN bits
   
-  g_bien_data_sp_i<-bien_traits[which(bien_traits$species==sp_i & bien_traits$trait_name=="Specific leaf area (SLA)"),]
+  g_bien_data_sp_i<-bien_traits[which(bien_traits$taxon==sp_i & bien_traits$trait_name=="Specific leaf area (SLA)"),]
   traits_i[[7]]<-na.omit(as.matrix(g_bien_data_sp_i$trait_value))
   
   h_bien_data_genus_i<-bien_traits[which(bien_traits$genus==genus_i & bien_traits$trait_name=="Specific leaf area (SLA)"),]
@@ -811,7 +811,7 @@ for( i in 1:length(sp_by_plot[,1])){
   
   #BIEN bits
   
-  g_bien_data_sp_i<-bien_traits[which(bien_traits$species==sp_i & bien_traits$trait_name=="Area-based photosynthesis (Aarea)"),]
+  g_bien_data_sp_i<-bien_traits[which(bien_traits$taxon==sp_i & bien_traits$trait_name=="Area-based photosynthesis (Aarea)"),]
   traits_i[[7]]<-na.omit(as.matrix(g_bien_data_sp_i$trait_value))
   
   h_bien_data_genus_i<-bien_traits[which(bien_traits$genus==genus_i & bien_traits$trait_name=="Area-based photosynthesis (Aarea)"),]
@@ -1217,8 +1217,27 @@ legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c
 
 
 #What we need
-#edited_plots
 
 #for each trait, across all plots, how much of the data is from level a,b,c,d,e,etc
+cmass_meta<-read.csv(file ="Cmass_fitting_metadata.csv")
+nmass_meta<-read.csv(file ="Nmass_fitting_metadata.csv")
+pmass_meta<-read.csv(file ="Pmass_fitting_metadata.csv")
+sla_meta<-read.csv("sla_fitting_metadata.csv")
+photo_meta<-read.csv("photosynthesis_fitting_metadata.csv")
+combined_meta<-rbind(cmass_meta,nmass_meta,pmass_meta,sla_meta,photo_meta)
+list_hier<-unique(as.character(combined_meta$level_used))
+lapply(X = list_hier,FUN = which(combined_meta$level_used==))
+out_hier<-NULL
+for(i in 1:length(list_hier)){
+n<-length(which(combined_meta$level_used==list_hier[i]))  
+level_used<-list_hier[i]
+out_hier<-rbind(out_hier,cbind(level_used,n))
+}
+out_hier[9,]
+n<-length(which(is.na(combined_meta$level_used)==TRUE))
+out_hier[9,]<-c("NA",n)
+write.csv(out_hier,file = "hierarchy_level_used_all_traits.csv")
+
 #for each trait and each plot, how many of the values exceeded the min, max?
-#re-do analyses in a more rudimentary value: 
+
+#re-do analyses in a more rudimentary value? 
