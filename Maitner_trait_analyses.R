@@ -1308,6 +1308,10 @@ return(output)
 
 ############
 load("sla_draws_edited")
+load("cmass_draws_edited")
+load("pmass_draws_edited")
+load("nmass_draws_edited")
+load("photosynthesis_draws_edited")
 
 trait_list<-sla_draws_edited
 lwd=2
@@ -1354,16 +1358,16 @@ legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c
 trait_list<-nmass_draws_edited
 lwd=2
 dev.new(width=5, height=4)
-plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],ylim=c(0,190),xlim=c(0,.05),main = "Nitrogen",xlab="Percent",lwd=lwd,lty=1)  
-lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
-lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
-lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
-lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
-lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
-lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
-lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
-lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
-lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+plot(density(na.omit(as.vector(colMeans(trait_list[[2]])))),col=colors_for_plots[1],ylim=c(0,350),xlim=c(0.005,.045),main = "Nitrogen",xlab="Percent",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[10]])))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[5]])))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[6]])))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[7]])))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[1]])))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[8]])))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[4]])))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[9]])))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[3]])))),col=colors_for_plots[10],lwd=lwd,lty=1)  
 
 legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
   "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
@@ -1374,16 +1378,16 @@ legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c
 trait_list<-pmass_draws_edited
 lwd=2
 dev.new(width=5, height=4)
-plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],ylim=c(0,1800),xlim=c(0,.004),main = "Phosphorus",xlab="Percent",lwd=lwd,lty=1)  
-lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
-lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
-lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
-lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
-lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
-lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
-lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
-lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
-lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+plot(density(na.omit(as.vector(colMeans(trait_list[[2]])))),col=colors_for_plots[1],ylim=c(0,6500),xlim=c(0,.004),main = "Phosphorus",xlab="Percent",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[10]])))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[5]])))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[6]])))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[7]])))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[1]])))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[8]])))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[4]])))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[9]])))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[3]])))),col=colors_for_plots[10],lwd=lwd,lty=1)  
 
 legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
   "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
@@ -1394,16 +1398,16 @@ legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c
 trait_list<-photosynthesis_draws_edited
 lwd=2
 dev.new(width=5, height=4)
-plot(density(na.omit(as.vector(trait_list[[2]]))),col=colors_for_plots[1],ylim=c(0,.11),main = "Photosynthesis",xlab="umol/m^2/s",lwd=lwd,lty=1)  
-lines(density(na.omit(as.vector(trait_list[[10]]))),col=colors_for_plots[2],lwd=lwd,lty=2)  
-lines(density(na.omit(as.vector(trait_list[[5]]))),col=colors_for_plots[3],lwd=lwd,lty=3)  
-lines(density(na.omit(as.vector(trait_list[[6]]))),col=colors_for_plots[4],lwd=lwd,lty=4)  
-lines(density(na.omit(as.vector(trait_list[[7]]))),col=colors_for_plots[5],lwd=lwd,lty=5)  
-lines(density(na.omit(as.vector(trait_list[[1]]))),col=colors_for_plots[6],lwd=lwd,lty=5)  
-lines(density(na.omit(as.vector(trait_list[[8]]))),col=colors_for_plots[7],lwd=lwd,lty=4)  
-lines(density(na.omit(as.vector(trait_list[[4]]))),col=colors_for_plots[8],lwd=lwd,lty=3)  
-lines(density(na.omit(as.vector(trait_list[[9]]))),col=colors_for_plots[9],lwd=lwd,lty=2)  
-lines(density(na.omit(as.vector(trait_list[[3]]))),col=colors_for_plots[10],lwd=lwd,lty=1)  
+plot(density(na.omit(as.vector(colMeans(trait_list[[2]])))),col=colors_for_plots[1],ylim=c(0,.22),xlim=c(0,25),main = "Photosynthesis",xlab="umol/m^2/s",lwd=lwd,lty=1)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[10]])))),col=colors_for_plots[2],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[5]])))),col=colors_for_plots[3],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[6]])))),col=colors_for_plots[4],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[7]])))),col=colors_for_plots[5],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[1]])))),col=colors_for_plots[6],lwd=lwd,lty=5)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[8]])))),col=colors_for_plots[7],lwd=lwd,lty=4)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[4]])))),col=colors_for_plots[8],lwd=lwd,lty=3)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[9]])))),col=colors_for_plots[9],lwd=lwd,lty=2)  
+lines(density(na.omit(as.vector(colMeans(trait_list[[3]])))),col=colors_for_plots[10],lwd=lwd,lty=1)  
 
 legend("topright",lty=c(1,2,3,4,5,5,4,3,2,1),col=colors_for_plots[10:1],legend=c(
   "ACJ-01:3537m","WAY-01:3045m","ESP-01:2868m","TRU-04:2719m","SPD-01:1713m",
