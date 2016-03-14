@@ -148,7 +148,8 @@ table4 <- stargazer(linear.1, linear.2, linear.3, linear.4, type="html", title="
 ####Table_5   MST GPP_new_estimate and NPP_new scaling fits to subsampled trait distributions
 ######
 
-linear.1 <- lm(log(NPP_new) ~ log(Aboveground_biomass2), data=Peru_Plot_Master.data)
+
+
 linear.2 <- lm(log(GPP_new_estimate) ~ log(Aboveground_biomass2), data=Peru_Plot_Master.data)
 linear.3 <- lm(log(NPP_new) ~ log(Aboveground_biomass2) + MAinvBT, data=Peru_Plot_Master.data)
 linear.4 <- lm(log(GPP_new_estimate) ~ log(Aboveground_biomass2) + MAinvBT, data=Peru_Plot_Master.data)
