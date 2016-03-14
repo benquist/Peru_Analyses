@@ -1,7 +1,9 @@
 ###############
-summary stats
-
+##### summary stats
+#####   B. J. Enquist
+#####
 install.packages("stargazer")
+install.packages("dcolumn")
 library(stargazer)
 
 Peru_Plot_Master.data <- read.csv(file="/Users/brianjenquist/GitHub/R/Peru_Analyses/Peru_Gradient_NPP_Merged4.csv",header=T)
@@ -60,12 +62,33 @@ Transformedmean_sla_lamina_petiole <- (Peru_Plot_Master.data$mean_sla_lamina_pet
 TransformedSLALower <- (Peru_Plot_Master.data$SLAMeanLower * 1000)
 TransformedSLAUpper <- (Peru_Plot_Master.data$SLAMeanUpper * 1000)
 
+####Table_1
+
+stargazer(Peru_Plot_Master.data$elevation_m)
+linear.1 <- lm(mean_n_percent ~ Elevation..m., data=Peru_Plot_Master.data)
+linear.2 <- lm(mean_p_percent ~ Elevation..m., data=Peru_Plot_Master.data)
+linear.3 <- lm(PlotNtoP ~ Elevation..m., data=Peru_Plot_Master.data)
+linear.4 <- lm(mean_c_percent ~ Elevation..m., data=Peru_Plot_Master.data)
+linear.5 <- lm(mean_sla_lamina_petiole ~ Elevation..m., data=Peru_Plot_Master.data)
+linear.6 <- lm(mean_photosynthesis ~ Elevation..m., data=Peru_Plot_Master.data)
 
 
+####### Use R knitr to generate a pretty table. Next click File -> New File -> R HTML 
+####### Next click Knit HTML and choose where to save the file. You'll get a HTML file,
+####### Remove everything except the <htlm> tags. Copy the output from stargazer function:
+table1 <- stargazer(linear.1, linear.2, linear.3, linear.4, linear.5, linear.6, type="html", title="Regression Results", single.row=TRUE, ci=TRUE, ci.level=0.9, omit.stat=c("f", "ser"), no.space=TRUE)
+#write.csv(table1 , "Table1.html")
+
+
+
+
+
+####Table_2
 stargazer(Peru_Plot_Master.data$elevation_m)
 linear.1 <- lm(TransformedNpercent ~mean_n_percent, data=Peru_Plot_Master.data)
 linear.2 <- lm(TransformedPpercent ~ mean_p_percent, data=Peru_Plot_Master.data)
 
-table <- stargazer(linear.1, linear.2, type="html",
+
+table2 <- stargazer(linear.1, linear.2, type="html",
           title="Regression Results", single.row=TRUE,
           ci=TRUE, ci.level=0.9, omit.stat=c("f", "ser"))
