@@ -1,6 +1,11 @@
-
-
-## Load data packages from Allie Shenkin 
+########################################################################
+#  Peru CHAMBASA TDT paper
+#  Brian J. Enquist
+#  Load data packages from Allie Shenkin 
+# Abundance weighted AZ Chem, LMA, and Photosytnehsis data
+# Used to create Peru_Gradient_NPP_Merged6.csv 
+#  4/20/16
+########################################################################## 
 
 load("/Users/brianjenquist/GitHub/R/Peru_Analyses/lma.RData")
 load("/Users/brianjenquist/GitHub/R/Peru_Analyses/az_leaf_chem_moments.RData")
