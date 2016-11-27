@@ -133,6 +133,184 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
+
+### ggcorplot function
+library(ggplot2)
+
+#define a helper function (borrowed from the "ez" package)
+ezLev=function(x,new_order){
+  for(i in rev(new_order)){
+    x=relevel(x,ref=i)
+  }
+  return(x)
+}
+
+ggcorplot = function(data,var_text_size,cor_text_limits){
+  # normalize data
+  for(i in 1:length(data)){
+    data[,i]=(data[,i]-mean(data[,i]))/sd(data[,i])
+  }
+  # obtain new data frame
+  z=data.frame()
+  i = 1
+  j = i
+  while(i<=length(data)){
+    if(j>length(data)){
+      i=i+1
+      j=i
+    }else{
+      x = data[,i]
+      y = data[,j]
+      temp=as.data.frame(cbind(x,y))
+      temp=cbind(temp,names(data)[i],names(data)[j])
+      z=rbind(z,temp)
+      j=j+1
+    }
+  }
+  names(z)=c('x','y','x_lab','y_lab')
+  z$x_lab = ezLev(factor(z$x_lab),names(data))
+  z$y_lab = ezLev(factor(z$y_lab),names(data))
+  z=z[z$x_lab!=z$y_lab,]
+  #obtain correlation values
+  z_cor = data.frame()
+  i = 1
+  j = i
+  while(i<=length(data)){
+    if(j>length(data)){
+      i=i+1
+      j=i
+    }else{
+      x = data[,i]
+      y = data[,j]
+      x_mid = min(x)+diff(range(x))/2
+      y_mid = min(y)+diff(range(y))/2
+      this_cor = cor(x,y)
+      this_cor.test = cor.test(x,y)
+      this_col = ifelse(this_cor.test$p.value<.05,'<.05','>.05')
+      this_size = (this_cor)^2
+      cor_text = ifelse(
+        this_cor>0
+        ,substr(format(c(this_cor,.123456789),digits=2)[1],2,4)
+        ,paste('-',substr(format(c(this_cor,.123456789),digits=2)[1],3,5),sep='')
+      )
+      b=as.data.frame(cor_text)
+      b=cbind(b,x_mid,y_mid,this_col,this_size,names(data)[j],names(data)[i])
+      z_cor=rbind(z_cor,b)
+      j=j+1
+    }
+  }
+  names(z_cor)=c('cor','x_mid','y_mid','p','rsq','x_lab','y_lab')
+  z_cor$x_lab = ezLev(factor(z_cor$x_lab),names(data))
+  z_cor$y_lab = ezLev(factor(z_cor$y_lab),names(data))
+  diag = z_cor[z_cor$x_lab==z_cor$y_lab,]
+  z_cor=z_cor[z_cor$x_lab!=z_cor$y_lab,]
+  #start creating layers
+  points_layer = layer(
+    geom = 'point'
+    , data = z
+    , mapping = aes(
+      x = x
+      , y = y
+    )
+  )
+  lm_line_layer = layer(
+    geom = 'line'
+    , geom_params = list(colour = 'red')
+    , stat = 'smooth'
+    , stat_params = list(method = 'lm')
+    , data = z
+    , mapping = aes(
+      x = x
+      , y = y
+    )
+  )
+  lm_ribbon_layer = layer(
+    geom = 'ribbon'
+    , geom_params = list(fill = 'green', alpha = .5)
+    , stat = 'smooth'
+    , stat_params = list(method = 'lm')
+    , data = z
+    , mapping = aes(
+      x = x
+      , y = y
+    )
+  )
+  cor_text = layer(
+    geom = 'text'
+    , data = z_cor
+    , mapping = aes(
+      x=y_mid
+      , y=x_mid
+      , label=cor
+      , size = rsq
+      , colour = p
+    )
+  )
+  var_text = layer(
+    geom = 'text'
+    , geom_params = list(size=var_text_size)
+    , data = diag
+    , mapping = aes(
+      x=y_mid
+      , y=x_mid
+      , label=x_lab
+    )
+  )
+  f = facet_grid(y_lab~x_lab,scales='free')
+  o = opts(
+    panel.grid.minor = theme_blank()
+    ,panel.grid.major = theme_blank()
+    ,axis.ticks = theme_blank()
+    ,axis.text.y = theme_blank()
+    ,axis.text.x = theme_blank()
+    ,axis.title.y = theme_blank()
+    ,axis.title.x = theme_blank()
+    ,legend.position='none'
+  )
+  size_scale = scale_size(limits = c(0,1),to=cor_text_limits)
+  return(
+    ggplot()+
+      points_layer+
+      lm_ribbon_layer+
+      lm_line_layer+
+      var_text+
+      cor_text+
+      f+
+      o+
+      size_scale
+  )
+}
+
+#set up some fake data
+library(MASS)
+N=100
+
+#first pair of variables
+variance1=1
+variance2=2
+mean1=10
+mean2=20
+rho = .8
+Sigma=matrix(c(variance1,sqrt(variance1*variance2)*rho,sqrt(variance1*variance2)*rho,variance2),2,2)
+pair1=mvrnorm(N,c(mean1,mean2),Sigma,empirical=T)
+
+#second pair of variables
+variance1=10
+variance2=20
+mean1=100
+mean2=200
+rho = -.4
+Sigma=matrix(c(variance1,sqrt(variance1*variance2)*rho,sqrt(variance1*variance2)*rho,variance2),2,2)
+pair2=mvrnorm(N,c(mean1,mean2),Sigma,empirical=T)
+
+my_data=data.frame(cbind(pair1,pair2))
+
+ggcorplot(
+  data = my_data
+  , var_text_size = 30
+  , cor_text_limits = c(2,30)
+)
+
 ############################################################################  
 # PCA analyses
 #######################################
@@ -195,16 +373,18 @@ write.csv(second.component.scores, "Second.component.scores.abund.csv")
 #########  Best predictors of PCA1 and PCA2 variation, 
 #PCAfit <- glmulti(PCA1Scores ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1. + Elevation.m. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
 
-PCA_fit <- glmulti(PCA1ScoresPlotTraits_a ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp + Aspect..deg.+ Slope..deg.+ Soil.moisture.... + Elevation.m., data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
+PCA_fit <- glmulti(PCA1ScoresPlotTraits_a~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp + Aspect..deg.+ Slope..deg.+ Soil.moisture.... + Elevation.m., data = Peru_Plot_Master.data, crit=BIC, level=1, fitfunc=glm, method="h")
+# prior had method ="h"
 summary(PCA_fit)
 tmp <- weightable(PCA_fit)
 tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
 tmp
 summary(PCA_fit@objects[[1]])
 plot(PCA_fit)
+print(PCA_fit)
 #Variable Importance
 plot(PCA_fit, type="s")
-
+summary(PCA_fit@objects[[1]])
 
 ### using PCA1ScoresPlotTraits_a PCA 1 is maintly soil moisture
 
@@ -243,6 +423,106 @@ plot(PCAfit2Sample, type="s")
 #PCA1 is mainly solar radiation
 
 
+PCAfit2Sample <- glmulti(PCA2ScoresTraitSample ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
+
+
+install.packages("leaps")
+library(leaps)
+leaps=regsubsets(PCA1ScoresPlotTraits_a ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, nbest=10)
+plot(leaps, scale="adjr2")
+plot(leaps, scale="bic")
+summary(leaps)
+library(car)
+subsets(leaps, statistic="bic")
+
+
+require(lattice)
+require(ggplot2)
+PCA1 <- Peru_Plot_Master.data$PCA1ScoresPlotTraits_a
+SolarRad. <- Peru_Plot_Master.data$SolarRadiation.GJ.m.2.yr.1.
+Precip. <- Peru_Plot_Master.data$Precipitation.mm.yr.1.
+Elev. <- Peru_Plot_Master.data$Elevation.m.
+Temp. <- Peru_Plot_Master.data$MeanAnnualAirTemperature.degC.
+pairs(~ PCA1 + SolarRad. + Precip. + Temp. + Elev., pch = 21)
+
+#df<-data.frame(PCA1,SolarRad.,Precip.,Temp.,Elev.)
+
+
+
+# pairwise correlation PCA1a
+# help("cor") shows that pearson is default
+my_data <- Peru_Plot_Master.data[, c(41,6,18,19,20,21)]
+#head(my_data, 6)
+res <- cor(na.omit(my_data))
+round(res, 2)
+
+## correlation matrix of abiotic correlations with PCA1 showing that temperature is best pairwise predictor
+
+library(corrplot)
+res <- cor(na.omit(my_data))
+corrplot(res, method="circle")
+corrplot(res, method="ellipse")
+corrplot(res, method="number", type="upper", insig = "blank")
+#corrplot(res, insig = "blank")
+#corrplot.mixed(res, lower="ellipse", upper="number")
+
+
+# pairwise correlation PCA2a
+my_data2 <- Peru_Plot_Master.data[, c(42,6,18,19,20,21)]
+#head(my_data, 6)
+res2 <- cor(na.omit(my_data2))
+round(res2, 2)
+
+## correlation matrix of abiotic correlations with PCA1 showing that temperature is best pairwise predictor
+
+library(corrplot)
+res2 <- cor(na.omit(my_data2))
+corrplot(res2, method="circle")
+corrplot(res2, method="ellipse")
+corrplot(res2, method="number", type="upper", insig = "blank")
+#corrplot(res2, insig = "blank")
+#corrplot.mixed(res, lower="ellipse", upper="number")
+
+
+
+######### PCA subsampling ##############
+# pairwise correlation PCA1 subsample
+my_data <- Peru_Plot_Master.data[, c(43,6,18,19,20,21)]
+#head(my_data, 6)
+res <- cor(na.omit(my_data))
+round(res, 2)
+
+## correlation matrix of abiotic correlations with PCA1 showing that temperature is best pairwise predictor
+
+library(corrplot)
+res <- cor(na.omit(my_data))
+corrplot(res, method="circle")
+corrplot(res, method="ellipse")
+corrplot(res, method="number", type="upper", insig = "blank")
+#corrplot(res, insig = "blank")
+#corrplot.mixed(res, lower="ellipse", upper="number")
+
+# pairwise correlation PCA2 subsample
+my_data2 <- Peru_Plot_Master.data[, c(44,6,18,19,20,21)]
+#head(my_data, 6)
+res2 <- cor(na.omit(my_data2))
+round(res2, 2)
+
+## correlation matrix of abiotic correlations with PCA1 showing that temperature is best pairwise predictor
+
+library(corrplot)
+res2 <- cor(na.omit(my_data2))
+corrplot(res2, method="circle")
+corrplot(res2, method="ellipse")
+corrplot(res2, method="number", type="upper", insig = "blank")
+#corrplot(res2, insig = "blank")
+#corrplot.mixed(res, lower="ellipse", upper="number")
+
+## precip comes out very strong on PCA2 subsample
+
+
+
+
 #########################################################
 ########### Plots of PCA axes vs. environmental variation
 myplot_PCA1vElev<- ggplot(Peru_Plot_Master.data, aes(Elevation.m., PCA1ScoresPlotTraits_a)) +
@@ -260,22 +540,25 @@ myplot_PCA1vTemp<- ggplot(Peru_Plot_Master.data, aes(MeanAnnualAirTemperature.de
 myplot_PCA1vTemp
 
 
-myplot_PCA1vSolar<- ggplot(Peru_Plot_Master.data, aes(SolarRadiation.GJ.m.2.yr.1., PCA1ScoresPlotTraits_a)) +
-  geom_point(size = 3, color="red") +
+#myplot_PCA1vSolar<- ggplot(Peru_Plot_Master.data, aes(SolarRadiation.GJ.m.2.yr.1., PCA1ScoresPlotTraits_a)) +
+  #geom_point(size = 3, color="red") +
   #geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
   #position=position_dodge(0.05)) +
-  geom_smooth(method=lm)
-myplot_PCA1vSolar
+  #geom_smooth(method=lm)
+#myplot_PCA1vSolar
 
-myplot_PCA1vSoilMoist<- ggplot(Peru_Plot_Master.data, aes(Soil.moisture...., PCA1ScoresPlotTraits_a)) +
-  geom_point(size = 3, color="red") +
+#myplot_PCA1vSoilMoist<- ggplot(Peru_Plot_Master.data, aes(Soil.moisture...., PCA1ScoresPlotTraits_a)) +
+  #geom_point(size = 3, color="red") +
   #geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
   #position=position_dodge(0.05)) +
-  geom_smooth(method=lm)
-myplot_PCA1vSoilMoist
+  #geom_smooth(method=lm)
+#myplot_PCA1vSoilMoist
 
 
-ModelPCA1 <- lm(PCA1ScoresPlotTraits_a ~ MeanAnnualAirTemperature.degC., data=Peru_Plot_Master.data)
+ModelPCA1a <- lm(PCA1ScoresPlotTraits_a ~ MeanAnnualAirTemperature.degC., data=Peru_Plot_Master.data)
+summary(ModelPCA1a)  # y ~ x
+
+ModelPCA1 <- lm(PCA1ScoresTraitSample ~ MeanAnnualAirTemperature.degC., data=Peru_Plot_Master.data)
 summary(ModelPCA1)  # y ~ x
 
 
@@ -286,8 +569,21 @@ PCA2 <- myplot_PCA2vElev<- ggplot(Peru_Plot_Master.data, aes(SolarRadiation.GJ.m
   geom_smooth(method=lm)
 myplot_PCA2vElev
 
-Model_PCA2 <- lm(PCA2ScoresPlotTraits_a ~ SolarRadiation.GJ.m.2.yr.1., data=Peru_Plot_Master.data)
+Model_PCA2a <- lm(PCA2ScoresPlotTraits_a ~ SolarRadiation.GJ.m.2.yr.1., data=Peru_Plot_Master.data)
+summary(Model_PCA2a)
+
+Model_PCA2 <- lm(PCA2ScoresPlotTraits_a ~ Soil.moisture...., data=Peru_Plot_Master.data)
 summary(Model_PCA2)
+
+Model_PCA2 <- lm(PCA2ScoresTraitSample~ Soil.moisture...., data=Peru_Plot_Master.data)
+summary(Model_PCA2)
+
+PCA2subsample <- myplot_PCA2vElevSubsample<- ggplot(Peru_Plot_Master.data, aes(Soil.moisture...., PCA2ScoresPlotTraits_a)) +
+  geom_point(size = 3, color="red") +
+  #geom_errorbar(aes(ymin=CMeanLower, ymax=CMeanUpper), width=.2,
+  #position=position_dodge(0.05)) +
+  geom_smooth(method=lm)
+myplot_PCA2vElevSubsample
 
 png("Figure_PCA_Multi.png", units = "px", width=1500, height=900, res=170)
 
