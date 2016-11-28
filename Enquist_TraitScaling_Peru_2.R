@@ -193,63 +193,67 @@ length(second.component.scores)
 write.csv(second.component.scores, "Second.component.scores.abund.csv")
 
 
+
 #################################
-#########  Best predictors of PCA1 and PCA2 variation, 
+#################################
+#########  Best predictors of PCA1 and PCA2 variation,
+
+
 #PCAfit <- glmulti(PCA1Scores ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1. + Elevation.m. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
 
-PCA_fit <- glmulti(PCA1ScoresPlotTraits_a~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp + Aspect..deg.+ Slope..deg.+ Soil.moisture.... + Elevation.m., data = Peru_Plot_Master.data, crit=BIC, level=1, fitfunc=glm, method="h")
+#PCA_fit <- glmulti(PCA1ScoresPlotTraits_a~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp + Aspect..deg.+ Slope..deg.+ Soil.moisture.... + Elevation.m., data = Peru_Plot_Master.data, crit=BIC, level=1, fitfunc=glm, method="h")
 # prior had method ="h"
-summary(PCA_fit)
-tmp <- weightable(PCA_fit)
-tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
-tmp
-summary(PCA_fit@objects[[1]])
-plot(PCA_fit)
-print(PCA_fit)
+#summary(PCA_fit)
+#tmp <- weightable(PCA_fit)
+#tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
+#tmp
+#summary(PCA_fit@objects[[1]])
+#plot(PCA_fit)
+#print(PCA_fit)
 #Variable Importance
-plot(PCA_fit, type="s")
-summary(PCA_fit@objects[[1]])
+#plot(PCA_fit, type="s")
+#summary(PCA_fit@objects[[1]])
 
 ### using PCA1ScoresPlotTraits_a PCA 1 is maintly soil moisture
 
-PCA2fit <- glmulti(PCA2ScoresPlotTraits ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1. + MeanAnnualAirTemperature.degC. + mean_air_temp + Aspect..deg.+ Slope..deg.+ Soil.moisture.... + Elevation.m.,, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
-summary(PCA2fit)
-tmp <- weightable(PCA2fit)
-tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
-tmp
-summary(PCA2fit@objects[[1]])
-plot(PCA2fit)
+#PCA2fit <- glmulti(PCA2ScoresPlotTraits ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1. + MeanAnnualAirTemperature.degC. + mean_air_temp + Aspect..deg.+ Slope..deg.+ Soil.moisture.... + Elevation.m.,, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
+#summary(PCA2fit)
+#tmp <- weightable(PCA2fit)
+#tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
+#tmp
+#summary(PCA2fit@objects[[1]])
+#plot(PCA2fit)
 #Variable Importance
-plot(PCA2fit, type="s")
+#plot(PCA2fit, type="s")
 
 
 ## Whole community trait variation in PCA space
-PCAfitSample <- glmulti(PCA1ScoresTraitSample ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
-summary(PCAfitSample)
-tmp <- weightable(PCAfitSample)
-tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
-tmp
-summary(PCAfitSample@objects[[1]])
-plot(PCAfitSample)
+#PCAfitSample <- glmulti(PCA1ScoresTraitSample ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
+#summary(PCAfitSample)
+#tmp <- weightable(PCAfitSample)
+#tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
+#tmp
+#summary(PCAfitSample@objects[[1]])
+#plot(PCAfitSample)
 #Variable Importance
-plot(PCAfitSample, type="s")
+#plot(PCAfitSample, type="s")
 #PCA1 is mainly solar radiation
 
-PCAfit2Sample <- glmulti(PCA2ScoresTraitSample ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
-summary(PCAfit2Sample)
-tmp <- weightable(PCAfit2Sample)
-tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
-tmp
-summary(PCAfit2Sample@objects[[1]])
-plot(PCAfit2Sample)
+#PCAfit2Sample <- glmulti(PCA2ScoresTraitSample ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
+#summary(PCAfit2Sample)
+#tmp <- weightable(PCAfit2Sample)
+#tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
+#tmp
+#summary(PCAfit2Sample@objects[[1]])
+#plot(PCAfit2Sample)
 #Variable Importance
-plot(PCAfit2Sample, type="s")
+#plot(PCAfit2Sample, type="s")
 #PCA1 is mainly solar radiation
 
 
-PCAfit2Sample <- glmulti(PCA2ScoresTraitSample ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
+#PCAfit2Sample <- glmulti(PCA2ScoresTraitSample ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
 
-
+# pairwise correlations with abiotic environment and PCA scores
 install.packages("leaps")
 library(leaps)
 leaps=regsubsets(PCA1ScoresPlotTraits_a ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, nbest=10)
@@ -270,7 +274,6 @@ Temp. <- Peru_Plot_Master.data$MeanAnnualAirTemperature.degC.
 pairs(~ PCA1 + SolarRad. + Precip. + Temp. + Elev., pch = 21)
 
 #df<-data.frame(PCA1,SolarRad.,Precip.,Temp.,Elev.)
-
 
 
 # pairwise correlation PCA1a
@@ -418,60 +421,9 @@ dev.off()
 
 
 
-#####################################################################################
-# Best predictors of PCA1 and PCA2 variation, climate?
 
-#PCAfit <- glmulti(PCA1Scores ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1. + Elevation.m. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
-
-PCAfit <- glmulti(PCA1ScoresPlotTraits_a ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
-summary(PCAfit)
-#tmpPCA1 <- weightable(PCAfit)
-#tmpPCA1 <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
-#tmpPCA1
-summary(PCAfit@objects[[1]])
-summary(PCAfit@objects[[2]])
-plot(PCAfit)
-#Variable Importance
-plot(PCAfit, type="s")
-#PCA1 is mainly temperature
-
-
-PCA2fit <- glmulti(PCA2ScoresPlotTraits_a ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1. + MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
-summary(PCA2fit)
-#tmp <- weightable(PCA2fit)
-#tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
-#tmp
-summary(PCA2fit@objects[[1]])
-summary(PCA2fit@objects[[2]])
-
-plot(PCA2fit)
-#Variable Importance
-plot(PCA2fit, type="s")
-
-
-PCAfitSample <- glmulti(PCA1ScoresTraitSample ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
-summary(PCAfitSample)
-tmp <- weightable(PCAfitSample)
-tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
-tmp
-summary(PCAfitSample@objects[[1]])
-plot(PCAfitSample)
-#Variable Importance
-plot(PCAfitSample, type="s")
-#PCA1 is mainly solar radiation
-
-PCAfit2Sample <- glmulti(PCA2ScoresTraitSample ~ SolarRadiation.GJ.m.2.yr.1. + Precipitation.mm.yr.1.+ MeanAnnualAirTemperature.degC. + mean_air_temp, data = Peru_Plot_Master.data, crit=aicc, level=1, fitfunc=glm, method="h")
-summary(PCAfit2Sample)
-tmp <- weightable(PCAfit2Sample)
-tmp <- tmp[tmp$aicc <= min(tmp$aicc) + 20,]
-tmp
-summary(PCAfit2Sample@objects[[1]])
-plot(PCAfit2Sample)
-#Variable Importance
-plot(PCAfit2Sample, type="s")
-#PCA1 is mainly solar radiation
-
-
+#######
+#######################
 ########################################################################
 ###  Relationship between dominant community species traits and elevation
 ###
@@ -780,7 +732,7 @@ N3 <- myplot_TDTSkew <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., NSkewnes
   #position=position_dodge(0.05)) +
   #geom_smooth(method=lm) +
   #geom_smooth()
-  expand_limits(y=c(-1.0,10.0)) +
+  expand_limits(y=c(-1.0,2.5)) +
   geom_hline(yintercept = 0)
 #myplot_TDTSkew 
 N3
@@ -791,10 +743,10 @@ confint(ModelTDTNSkew)
 coef(ModelTDTNSkew)
 
 #Plot Kurtosis
-N4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., NKurtosisMean)) +
+N4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., (NKurtosisMean-3))) +
   xlab("Elevation (m)") + ylab("Kurtosis % N ") +
   geom_point(size = 3, color="red") +
-  geom_errorbar(aes(ymin=NKurtosisLower, ymax=NKurtosisUpper), width=.2,
+  geom_errorbar(aes(ymin=(NKurtosisLower-3), ymax=(NKurtosisUpper-3)), width=.2,
                 position=position_dodge(0.05)) +
   theme_bw() +
   theme(axis.text = element_text(size = 9),
@@ -804,7 +756,7 @@ N4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., NKurtosisMean)) +
   
   #geom_smooth(method=lm)+
   #geom_smooth()+ 
-  expand_limits(y=c(-10,20)) +
+  expand_limits(y=c(-10,10)) +
   geom_hline(yintercept = 0)
 
 N4
@@ -890,7 +842,7 @@ C3 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., CSkewnessMean)) +
   #position=position_dodge(0.05)) +
   #geom_smooth(method=lm)+
   #geom_smooth()+
-  expand_limits(y=c(-1.0,10.0)) +
+  expand_limits(y=c(-1.0,2.5)) +
   geom_hline(yintercept = 0)
 #myplot_TDTCSkew 
 C3        
@@ -901,10 +853,10 @@ coef(ModelTDTCSkew)
 
 
 #Plot Kurtosis
-C4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., CKurtosisMean)) +
-  xlab("Elevation (m)") + ylab("  Kurtosis % C ") +
+C4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., (CKurtosisMean-3))) +
+  xlab("Elevation (m)") + ylab("Kurtosis % C ") +
   geom_point(size = 3, color="red") +
-  geom_errorbar(aes(ymin=CKurtosisLower, ymax=CKurtosisUpper), width=.2,
+  geom_errorbar(aes(ymin=(CKurtosisLower-3), ymax=(CKurtosisUpper-3)), width=.2,
                 position=position_dodge(0.05)) +
   theme_bw() +
   theme(axis.text = element_text(size = 9),
@@ -915,7 +867,7 @@ C4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., CKurtosisMean)) +
   #position=position_dodge(0.05)) +
   #geom_smooth(method=lm)+
   #geom_smooth()+ 
-  expand_limits(y=c(-10,20)) +
+  expand_limits(y=c(-10,10)) +
   geom_hline(yintercept = 0)
 #myplot_TDTCKurtosis 
 C4         
@@ -999,7 +951,7 @@ P3 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., PSkewnessMean)) +
   #position=position_dodge(0.05)) +
   #geom_smooth(method=lm)+
   #geom_smooth()+
-  expand_limits(y=c(-1.0,10.0)) +
+  expand_limits(y=c(-1.0,2.5)) +
   geom_hline(yintercept = 0)
 #myplot_TDTPSkew 
 
@@ -1010,10 +962,10 @@ confint(ModelTDTNVar)
 coef(ModelTDTNVar)
 
 #Plot Kurtosis
-P4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., PKurtosisMean)) +
+P4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., (PKurtosisMean-3))) +
   xlab("Elevation (m)") + ylab("Kurtosis % P ") +
   geom_point(size = 3, color="red") +
-  geom_errorbar(aes(ymin=PKurtosisLower, ymax=PKurtosisUpper), width=.2,
+  geom_errorbar(aes(ymin=(PKurtosisLower-3), ymax=(PKurtosisUpper-3)), width=.2,
                 position=position_dodge(0.05)) +
   theme_bw() +
   theme(axis.text = element_text(size = 9),
@@ -1024,10 +976,10 @@ P4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., PKurtosisMean)) +
   #position=position_dodge(0.05)) +
   #geom_smooth(method=lm)+
   #geom_smooth()+ 
-  expand_limits(y=c(-10,20)) +
+  expand_limits(y=c(-10,10)) +
   geom_hline(yintercept = 0)
 #myplot_TDTPKurtosis 
-
+P4
 
 ModelTDTNVar <- lm(Elevation.m. ~ PKurtosisMean, Peru_Plot_Master.data)
 summary(ModelTDTNVar)
@@ -1105,7 +1057,7 @@ Photo3 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., PhotoSkewnessMean)) +
   #position=position_dodge(0.05)) +
   geom_smooth(method=lm) +
   #geom_smooth()+
-  expand_limits(y=c(-1.0,10.0)) +
+  expand_limits(y=c(-1.0,2.5)) +
   geom_hline(yintercept = 0)
 #myplot_TDTCSkew 
 
@@ -1116,10 +1068,10 @@ confint(ModelTDTPhotoVar)
 coef(ModelTDTPhotoVar)
 
 #Plot Kurtosis
-Photo4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., PhotoKurtosisMean)) +
+Photo4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., (PhotoKurtosisMean-3))) +
   xlab("Elevation (m)") + ylab("Kurtosis Leaf Photo") +
   geom_point(size = 3, color="red") +
-  geom_errorbar(aes(ymin=PhotoKurtosisLower, ymax=PhotoKurtosisUpper), width=.2, position=position_dodge(0.05)) +
+  geom_errorbar(aes(ymin=(PhotoKurtosisLower-3), ymax=(PhotoKurtosisUpper-3)), width=.2, position=position_dodge(0.05)) +
   theme_bw() +
   theme(axis.text = element_text(size = 9),
         axis.text.y = element_text(size = rel(1.5), angle = 0)) +
@@ -1129,8 +1081,9 @@ Photo4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., PhotoKurtosisMean)) +
   #position=position_dodge(0.05)) +
   geom_smooth(method=lm)+
   #geom_smooth()+ 
-  expand_limits(y=c(-10,20)) +
+  expand_limits(y=c(-10,10)) +
   geom_hline(yintercept = 0)
+Photo4
 #myplot_TDTCKurtosis 
 
 
@@ -1209,7 +1162,7 @@ LMA3 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., SLASkewnessMean)) +
                        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
                  #geom_smooth(method=lm)+
                  #geom_smooth()+
-                 expand_limits(y=c(-1.0,10.0)) +
+                 expand_limits(y=c(-1.0,2.5)) +
                  geom_hline(yintercept = 0)
                #myplot_TDTSkew
                
@@ -1220,10 +1173,10 @@ coef(ModelTDTNVar)
                
 #Plot Kurtosis
                
- LMA4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., SLAKurtosisMean)) +
+ LMA4 <- ggplot(Peru_Plot_Master.data, aes(Elevation.m., (SLAKurtosisMean-3))) +
    xlab("Elevation (m)") + ylab("  Kurtosis LMA") +
    geom_point(size = 3, color="red") +
-   geom_errorbar(aes(ymin=SLAKurtosisLower, ymax=SLAKurtosisUpper), width=.2,
+   geom_errorbar(aes(ymin=(SLAKurtosisLower-3), ymax=(SLAKurtosisUpper-3)), width=.2,
                  position=position_dodge(0.05)) +
                  theme_bw() +
                  theme(axis.text = element_text(size = 9),
@@ -1232,7 +1185,7 @@ coef(ModelTDTNVar)
                        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
                  #geom_smooth(method=lm)+
                  #geom_smooth()+
-                 expand_limits(y=c(-10,20)) +
+                 expand_limits(y=c(-10,10)) +
                  geom_hline(yintercept = 0)
 LMA4             
                
@@ -1248,7 +1201,6 @@ LMA4
 png("Figure_Sampled_Traits_Combined.png", units = "px", width=2400, height=1800, res=170)
 multiplot(N1, N2, N3, N4, C1, C2, C3, C4, P1, P2, P3, P4, Photo1, Photo2, Photo3, Photo4, LMA1, LMA2, LMA3, LMA4, cols=5)
 dev.off() 
-
 
 
 ##############################################################################
@@ -1334,8 +1286,209 @@ dev.off()
 
 
 
+####################################################################
+##  MST predictions ln (NPP/M_Tot^0.6) ~ 1/kT ln(b)
+##
+###################################################################
+
+Peru_Plot_Master.data$MST_AGB1 <- ((Peru_Plot_Master.data$Aboveground_biomass2)^0.6)
+Peru_Plot_Master.data$MST_GPP1 <- ((Peru_Plot_Master.data$GPP_new_estimate)/(Peru_Plot_Master.data$MST_AGB1))
+Peru_Plot_Master.data$MST_NPP_new1 <- ((Peru_Plot_Master.data$NPP_new)/(Peru_Plot_Master.data$MST_AGB))
+
+png("Figure_Plot_MST_Plots.png", units = "px", width=1900, height=600, res=300)
+
+theme_set(theme_gray(base_size = 15))
+#theme_set(theme_classic(base_size = 30))
+MST <- ggplot(Peru_Plot_Master.data, aes(x=MAinvBT, y=log(MST_GPP1))) +
+  #xlab(italic("1/kT") + ylab(expression(ln(GPP/M[tot]^{0.6}))) +
+  xlab("Inverse Temperature (1/kT)") + ylab("ln(GPP/M[tot]^{0.6}") +
+  geom_point(size = 3, color="red") +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  geom_smooth(method=lm) +
+  #xlim(38.8, 40)+ylim(0.3, 1.2) +
+  geom_abline(intercept = 26.1, slope = -0.65, linetype=3)
+MST + coord_fixed(ratio = 0.9)
+MST
+coef(lm(log(MST_GPP1) ~ MAinvBT, data = Peru_Plot_Master.data))
+#(Intercept)     MAinvBT 
+#6.9286608  -0.1576762 
+
+
+#p <- ggplot(Peru_Plot_Master.data, aes(MAinvBT, log(MST_GPP1))) + 
+#geom_point() +
+#p + geom_hline(yintercept = 0.8)
+#p + geom_abline(intercept = 6.928, slope = -0.1)
+#xlim(38.7, 40)+ylim(0.3, 1.3)
+#p
+#p + geom_abline(intercept = 26.5, slope = -0.65) +
+#geom_smooth(method = "lm", se = FALSE)
+
+
+library(grid)
+grob <- grobTree(textGrob("A", x=0.9,  y=0.85, hjust=0,
+                          gp=gpar(col="Black", fontsize=15, fontface="bold")))
+# Plot
+MST1 <- MST + annotation_custom(grob)
+
+
+mMST1 <- lm(log(MST_GPP1)~ MAinvBT, data=Peru_Plot_Master.data)
+summary(mMST1) 
+lm.sumSquares(mMST1)
+AIC(mMST1)
+AICc(mMST1)
+modelEffectSizes(mMST1)  #lm.sunSquares is depreciated
+varImp(mMST1, scale = FALSE)
+#avPlots(mMST1)
+#crPlots(mMST1)
+confint(mMST1)
+vif(mMST1) 
+
+
+MST2 <- ggplot(Peru_Plot_Master.data, aes(x=MAinvBT, y=log(MST_NPP_new1))) +
+  # xlab(italic("1/kT") + ylab(expression(ln(NPP/M[tot]^{0.6}))) +
+  xlab("Inverse Temperature (1/kT)") + ylab("ln(NPP/M[tot]^{0.6}") +
+  geom_point(size = 3, color="red") +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  geom_smooth(method=lm) +
+  geom_abline(intercept = 25, slope = -0.65, linetype=3)
+MST2 + coord_fixed(ratio = 0.9)
+
+
+library(grid)
+grob <- grobTree(textGrob("B", x=0.9,  y=0.85, hjust=0,
+                          gp=gpar(col="Black", fontsize=15, fontface="bold")))
+# Plot
+MST3 <- MST2 + annotation_custom(grob)
+
+
+mMST2 <- lm(log(MST_NPP_new1)~ MAinvBT, data=Peru_Plot_Master.data)
+summary(mMST2) 
+lm.sumSquares(mMST2)
+AIC(mMST2)
+AICc(mMST2)
+modelEffectSizes(mMST2)  #lm.sunSquares is depreciated
+varImp(mMST2, scale = FALSE)
+#avPlots(mMST1)
+#crPlots(mMST1)
+confint(mMST2)
+vif(mMST2) 
+
+multiplot(MST1, MST3, cols=2)
+dev.off()
+
+
+
+############################################################
+#The bimodality coefficient (BC; SAS Institute, 1989)
+# http://psych.nyu.edu/freemanlab/pubs/2012_BRM.pdf see also https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3791391/
+#The BC is based on an empirical relationship between bimodality and the third and fourth statistical moments of a distribution (skewness and kurtosis). It is proportional to the division of squared skewness with uncorrected kurtosis, BC ∝ (s2 + 1)/k, with the underlying logic that a bimodal distribution will have very low kurtosis, an asymmetric character, or both; all of these conditions increase BC. The values range from 0 and 1, with those exceeding .555 (the value representing a uniform distribution) suggesting bi- modality (SAS Institute, 1989).
+# this is modified as BC ∝ (s2 + 1)/k+3
+
+BC_LMA <- ((Peru_Plot_Master.data$SLASkewnessMean)^2 +1)/((Peru_Plot_Master.data$SLAKurtosisMean)+3)
+
+BC_N <- ((Peru_Plot_Master.data$NSkewnessMean)^2 +1)/((Peru_Plot_Master.data$NKurtosisMean)+3)
+
+BC_P <- ((Peru_Plot_Master.data$PSkewnessMean)^2 +1)/((Peru_Plot_Master.data$PKurtosisMean)+3)
+
+BC_Photo <- ((Peru_Plot_Master.data$PhotoSkewnessMean)^2 +1)/((Peru_Plot_Master.data$PhotoKurtosisMean)+3)
+
+BC_C <- ((Peru_Plot_Master.data$CSkewnessMean)^2 +1)/((Peru_Plot_Master.data$CKurtosisMean)+3)
+
+png("Figure_Plot_BC_Plots.png", units = "px", width=1800, height=1800, res=200)
+
+LMA_bimodal <- ggplot(Peru_Plot_Master.data, aes(x=Elevation.m., y=BC_LMA)) +
+  xlab("Elevation m ") + ylab("LMA Bimodality coefficient, BC") +
+  geom_point(size = 3, color="red") +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  geom_smooth(method=lm) +
+  geom_hline(yintercept = 0.555)+ 
+  xlim(0, 3100)+ylim(0, 1) 
+LMA_bimodal + coord_fixed(ratio = 0.9)
+LMA_bimodal
+
+N_bimodal <- ggplot(Peru_Plot_Master.data, aes(x=Elevation.m., y=BC_N)) +
+  xlab("Elevation m ") + ylab("Nitrogen Bimodality coefficient, BC") +
+  geom_point(size = 3, color="red") +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  geom_smooth(method=lm) +
+  geom_hline(yintercept = 0.555)+ 
+  xlim(0, 3100)+ylim(0, 1) 
+N_bimodal + coord_fixed(ratio = 0.9)
+N_bimodal
+
+P_bimodal <- ggplot(Peru_Plot_Master.data, aes(x=Elevation.m., y=BC_P)) +
+  xlab("Elevation m ") + ylab("Phosphorus Bimodality coefficient, BC") +
+  geom_point(size = 3, color="red") +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  geom_smooth(method=lm) +
+  geom_hline(yintercept = 0.555)+ 
+  xlim(0, 3100)+ylim(0, 1) 
+P_bimodal + coord_fixed(ratio = 0.9)
+P_bimodal
+
+C_bimodal <- ggplot(Peru_Plot_Master.data, aes(x=Elevation.m., y=BC_C)) +
+  xlab("Elevation m ") + ylab("Carbon Bimodality coefficient, BC") +
+  geom_point(size = 3, color="red") +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  geom_smooth(method=lm) +
+  geom_hline(yintercept = 0.555)+ 
+  xlim(0, 3100)+ylim(0, 1) 
+C_bimodal + coord_fixed(ratio = 0.9)
+C_bimodal
+
+Photo_bimodal <- ggplot(Peru_Plot_Master.data, aes(x=Elevation.m., y=BC_Photo)) +
+  xlab("Elevation m ") + ylab("Photosynthesis Bimodality coefficient, BC") +
+  geom_point(size = 3, color="red") +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9),
+        axis.text.y = element_text(size = rel(1.5), angle = 0)) +
+  theme(axis.text = element_text(size = 9),
+        axis.text.x = element_text(size = rel(1.5), angle = 0)) +
+  geom_smooth(method=lm) +
+  geom_hline(yintercept = 0.555)+ 
+  xlim(0, 3100)+ylim(0, 1) 
+Photo_bimodal + coord_fixed(ratio = 0.9)
+Photo_bimodal
+
+multiplot(LMA_bimodal, Photo_bimodal, C_bimodal, N_bimodal, P_bimodal, cols=2)
+dev.off()
+
+
+
+
+#############
+
+
+
+
+################################
+
 #=========================================================================================
-# Draw Figure 6 with Celcius and 1/kT temperature axes
+# Draw Figure with Celcius and 1/kT temperature axes
 #=========================================================================================
 
 png("Figure_MST_Plots.png", units = "px", width=2500, height=1000, res=300)
